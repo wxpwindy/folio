@@ -1,0 +1,2678 @@
+{
+  "config": {
+    "argv": [
+      "/usr/local/bin/node",
+      "/Users/peter/Downloads/ResumeApp/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "/Users/peter/Downloads/ResumeApp/playwright.config.ts",
+    "rootDir": "/Users/peter/Downloads/ResumeApp/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/peter/Downloads/ResumeApp/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/peter/Downloads/ResumeApp/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "tsx tests/fixture-server.ts",
+      "url": "http://127.0.0.1:3101/api/workspace",
+      "reuseExistingServer": false,
+      "timeout": 120000,
+      "env": {
+        "OPENAI_API_KEY": "",
+        "OPENAI_MODEL": "e2e-cloud-model",
+        "OLLAMA_MODEL": "e2e-local-model"
+      }
+    }
+  },
+  "suites": [
+    {
+      "title": "admin.spec.ts",
+      "file": "admin.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "optional password change validates, cancels, handles failure and prevents duplicate submissions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 849,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:00.725Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9jaGFuZ2UtcGFzc3dvcmQ6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d4043a9dd1ab94463227-ef6d1d88bf562887f2f3",
+          "file": "admin.spec.ts",
+          "line": 135,
+          "column": 1
+        },
+        {
+          "title": "password change sign-out errors are shown and can be retried",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 357,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:01.579Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d4043a9dd1ab94463227-2db7ba5de929672bdec9",
+          "file": "admin.spec.ts",
+          "line": 204,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "administrator workflows",
+          "file": "admin.spec.ts",
+          "line": 19,
+          "column": 6,
+          "specs": [
+            {
+              "title": "username bootstrap, forced change, setup rotation, user controls and password recovery at 320px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2486,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:55:57.992Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFsKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYWRtaW4vdXNlcnMvMzcyNjcwODMtNTIxYS00ZWNlLWI1NDEtZmU1NTM5Y2IzZThmL2FjdGlvbjogbmV0OjpFUlJfQUJPUlRFRCIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hZG1pbi91c2Vycy8zNzI2NzA4My01MjFhLTRlY2UtYjU0MS1mZTU1MzljYjNlOGYvYWN0aW9uOiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2FkbWluL3VzZXJzLzM3MjY3MDgzLTUyMWEtNGVjZS1iNTQxLWZlNTUzOWNiM2U4Zi9hY3Rpb246IG5ldDo6RVJSX0FCT1JURUQiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYWRtaW4vdXNlcnMvMzcyNjcwODMtNTIxYS00ZWNlLWI1NDEtZmU1NTM5Y2IzZThmL2FjdGlvbjogbmV0OjpFUlJfQUJPUlRFRCIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hZG1pbi91c2Vycy8zNzI2NzA4My01MjFhLTRlY2UtYjU0MS1mZTU1MzljYjNlOGYvYWN0aW9uOiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2FkbWluL3VzZXJzLzM3MjY3MDgzLTUyMWEtNGVjZS1iNTQxLWZlNTUzOWNiM2U4Zi9hY3Rpb246IG5ldDo6RVJSX0FCT1JURUQiCiAgXQp9"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d4043a9dd1ab94463227-5a23f9f814294217f092",
+              "file": "admin.spec.ts",
+              "line": 21,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "auth.spec.ts",
+      "file": "auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "320px phone signup and email/phone login keep workspaces and document access isolated",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1257,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:02.754Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFsKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-35c6021508af0d81784e",
+          "file": "auth.spec.ts",
+          "line": 104,
+          "column": 1
+        },
+        {
+          "title": "sign out guards dirty work, clears keys and consent, and switches account-scoped preferences",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1058,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:04.014Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFsKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-78a155892b7a2c6a240d",
+          "file": "auth.spec.ts",
+          "line": 141,
+          "column": 1
+        },
+        {
+          "title": "logout in another tab makes a protected save return 401 and immediately removes the open document",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 961,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:05.075Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvdmVyc2lvbnMvMzRjMTkzM2UtMjA3Yi00MzJlLWIwZjgtOTA1Njc1ZmQwYmY5OiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA0MDEgKFVuYXV0aG9yaXplZCkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvdmVyc2lvbnMvMzRjMTkzM2UtMjA3Yi00MzJlLWIwZjgtOTA1Njc1ZmQwYmY5OiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-e6c049a058f47ac7b181",
+          "file": "auth.spec.ts",
+          "line": 204,
+          "column": 1
+        },
+        {
+          "title": "stale A tab upload after B login returns 401 without changing B data or session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1045,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:06.040Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZTogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAxIChVbmF1dGhvcml6ZWQpIgogIF0sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFsKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2Jhc2U6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-79b7a4c57df47dc23ced",
+          "file": "auth.spec.ts",
+          "line": 235,
+          "column": 3
+        },
+        {
+          "title": "stale A tab download after B login returns 401 without changing B data or session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 993,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:07.090Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZS9kMDI2YTgxMi02MmFiLTRkYTYtYTcyYy03YTZlMzVhODUwOTIvcGRmOiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA0MDEgKFVuYXV0aG9yaXplZCkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZS9kMDI2YTgxMi02MmFiLTRkYTYtYTcyYy03YTZlMzVhODUwOTIvcGRmOiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-8705824d107b44e49d00",
+          "file": "auth.spec.ts",
+          "line": 235,
+          "column": 3
+        },
+        {
+          "title": "stale A tab logout after B login returns 401 without changing B data or session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1023,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:08.088Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDQwMSAoVW5hdXRob3JpemVkKSIKICBdLAogICJ1bmV4cGVjdGVkIjogW10sCiAgImV4dGVybmFsUmVxdWVzdHMiOiBbXSwKICAiZmFpbGVkUmVxdWVzdHMiOiBbXSwKICAiY29tcGxldGVkRGVsZXRlQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEF1dGhBYm9ydHMiOiBbCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hdXRoL2xvZ291dDogbmV0OjpFUlJfQUJPUlRFRCIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hdXRoL2xvZ291dDogbmV0OjpFUlJfQUJPUlRFRCIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hdXRoL2xvZ291dDogbmV0OjpFUlJfQUJPUlRFRCIKICBdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-1b3bd51298575b8d1ebd",
+          "file": "auth.spec.ts",
+          "line": 235,
+          "column": 3
+        },
+        {
+          "title": "expired server session gates PDF access without a download and login rotates the session",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 426,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:09.115Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZS9hMjIyZTc1OC00NGVhLTRiM2EtYjQyNS1lMDI4MzQwNzE2MGUvcGRmOiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA0MDEgKFVuYXV0aG9yaXplZCkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZS9hMjIyZTc1OC00NGVhLTRiM2EtYjQyNS1lMDI4MzQwNzE2MGUvcGRmOiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d748ac400d08b85935ef-4338e19caa57ce1f6c96",
+          "file": "auth.spec.ts",
+          "line": 289,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "first account",
+          "file": "auth.spec.ts",
+          "line": 59,
+          "column": 6,
+          "specs": [
+            {
+              "title": "email setup claims legacy documents once; real session and original PDF survive reload",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 801,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:01.949Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFsKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-db3a7491235d770a22fc",
+              "file": "auth.spec.ts",
+              "line": 62,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "anonymous validation",
+          "file": "auth.spec.ts",
+          "line": 314,
+          "column": 6,
+          "specs": [
+            {
+              "title": "320px signup validates locally, rejects a bad setup code and shows safe login errors without leakage",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 793,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:09.545Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9zaWdudXA6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDQwMyAoRm9yYmlkZGVuKSIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hdXRoL2xvZ2luOiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA0MDEgKFVuYXV0aG9yaXplZCkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d748ac400d08b85935ef-df2d8cadb588e1c0d63e",
+              "file": "auth.spec.ts",
+              "line": 317,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "career.spec.ts",
+      "file": "career.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "career connectors join actual chronological dots across flat rows, gaps and overlaps",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 585,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:10.349Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-a7d458c5955496d88df4",
+          "file": "career.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "Java Developer and Software Engineer share one Y-row while senior roles stay separate",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 437,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:10.938Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-540cc6f90e24b99c49b1",
+          "file": "career.spec.ts",
+          "line": 48,
+          "column": 1
+        },
+        {
+          "title": "equivalent manager and director titles stay flat across companies without rewriting source titles",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 610,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:11.379Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-a0f40bcadff8bc0db450",
+          "file": "career.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "regeneration rebuilds employer labels from profile employer-title-date blocks",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 427,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:11.992Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-7040aa464ff67c72cafc",
+          "file": "career.spec.ts",
+          "line": 140,
+          "column": 1
+        },
+        {
+          "title": "matching titles share the same Y-height across companies and separate employment periods",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 590,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:12.422Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-0c44fdc073ad7a2466c0",
+          "file": "career.spec.ts",
+          "line": 178,
+          "column": 1
+        },
+        {
+          "title": "regeneration includes earlier employment after nested project headings and uses real title lines",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 363,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:13.016Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-c96c251da70fc755fd43",
+          "file": "career.spec.ts",
+          "line": 226,
+          "column": 1
+        },
+        {
+          "title": "career bars use original titles and month dates from the resume",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 521,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:13.382Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-d9382288d80c34ccc0b2",
+          "file": "career.spec.ts",
+          "line": 251,
+          "column": 1
+        },
+        {
+          "title": "career path uses saved base text and fits 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 643,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:13.907Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-a9e1923b3202a145dacb",
+          "file": "career.spec.ts",
+          "line": 274,
+          "column": 3
+        },
+        {
+          "title": "career path uses saved base text and fits 320px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 657,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:14.554Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-df64a294db09afc5922f",
+          "file": "career.spec.ts",
+          "line": 274,
+          "column": 3
+        },
+        {
+          "title": "regenerate loads latest saved base edits and replacement without modifying stored versions",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 482,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:15.214Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-ef86773caf194e0c6eca",
+          "file": "career.spec.ts",
+          "line": 313,
+          "column": 1
+        },
+        {
+          "title": "regeneration preserves chart on failure, locks editing and deduplicates pending requests",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 400,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:15.700Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvd29ya3NwYWNlOiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA1MDMgKFNlcnZpY2UgVW5hdmFpbGFibGUpIgogIF0sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "049889c74a6db2083665-43498af03948e2c58e3a",
+          "file": "career.spec.ts",
+          "line": 346,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "chat.spec.ts",
+      "file": "chat.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop local chat sends only the last five complete turns as follow-up context",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 716,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:16.112Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-16216a7633018161f868",
+          "file": "chat.spec.ts",
+          "line": 74,
+          "column": 1
+        },
+        {
+          "title": "automatic web search guards keyboard submission, renders all three ranked sources and resets consent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 691,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:16.831Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-305eecb940d34f9950c2",
+          "file": "chat.spec.ts",
+          "line": 93,
+          "column": 1
+        },
+        {
+          "title": "Bing is an explicit no-key choice and changing search provider clears consent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 446,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:17.526Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-d4b0f9b6c1cb3477f3ff",
+          "file": "chat.spec.ts",
+          "line": 165,
+          "column": 1
+        },
+        {
+          "title": "shortcut prompts and model selection invalidate automatic-search consent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 557,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:17.976Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-6608dbc3b086453b05ce",
+          "file": "chat.spec.ts",
+          "line": 184,
+          "column": 1
+        },
+        {
+          "title": "keyboard preserves newlines and IME composition, and sends only with fresh consent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 472,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:18.537Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-108d0f3317943ce16ca3",
+          "file": "chat.spec.ts",
+          "line": 216,
+          "column": 1
+        },
+        {
+          "title": "automatic search discloses 0 usable results without inventing extra sources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 422,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:19.013Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-ce63157bfdbfc70947cd",
+          "file": "chat.spec.ts",
+          "line": 254,
+          "column": 3
+        },
+        {
+          "title": "automatic search discloses 1 usable results without inventing extra sources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 417,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:19.438Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-676243067fe8a709bd43",
+          "file": "chat.spec.ts",
+          "line": 254,
+          "column": 3
+        },
+        {
+          "title": "automatic search discloses 2 usable results without inventing extra sources",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 420,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:19.859Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-5a0cce46b24c2a49173a",
+          "file": "chat.spec.ts",
+          "line": 254,
+          "column": 3
+        },
+        {
+          "title": "failed automatic search preserves draft, requires fresh consent and retries without duplicating history",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 505,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:20.284Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvY2hhdDogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNTAzIChTZXJ2aWNlIFVuYXZhaWxhYmxlKSIKICBdLAogICJ1bmV4cGVjdGVkIjogW10sCiAgImV4dGVybmFsUmVxdWVzdHMiOiBbXSwKICAiZmFpbGVkUmVxdWVzdHMiOiBbXSwKICAiY29tcGxldGVkRGVsZXRlQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEF1dGhBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-2a98f0f52945062fd8ae",
+          "file": "chat.spec.ts",
+          "line": 286,
+          "column": 1
+        },
+        {
+          "title": "empty models disable sending and Refresh models recovers without losing the draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 413,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:20.793Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-ba67955508131cde4aff",
+          "file": "chat.spec.ts",
+          "line": 335,
+          "column": 3
+        },
+        {
+          "title": "disconnected models disable sending and Refresh models recovers without losing the draft",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 400,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:21.210Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvY2hhdC9tb2RlbHM6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-a1805a7ff84b479dfd19",
+          "file": "chat.spec.ts",
+          "line": 335,
+          "column": 3
+        },
+        {
+          "title": "320px chat, search controls and source answers have no horizontal overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 426,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:21.613Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-b63053282b12150a0a79",
+          "file": "chat.spec.ts",
+          "line": 355,
+          "column": 1
+        },
+        {
+          "title": "New chat and navigation guard drafts and conversations; accepting clears all temporary state",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 870,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:22.043Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-1720f614441adb509339",
+          "file": "chat.spec.ts",
+          "line": 381,
+          "column": 1
+        },
+        {
+          "title": "reload does not persist conversation, draft, generated query, sources or consent",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1056,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:22.916Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6dac514d5d837ca37b9e-13dd2639a8adabd93870",
+          "file": "chat.spec.ts",
+          "line": 421,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "features.spec.ts",
+      "file": "features.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "disabled chat stays hidden for ordinary users and tab focus refreshes an open chat",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 367,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:23.981Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "85b3cc1667c06e9efc8f-5fec9943fe799601c0cb",
+          "file": "features.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "feature status failure hides chat without blocking resumes and can be retried",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 307,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:24.351Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvZmVhdHVyZXM6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "85b3cc1667c06e9efc8f-c05344acf9a1dad08bc3",
+          "file": "features.spec.ts",
+          "line": 36,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "pipeline.spec.ts",
+      "file": "pipeline.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "local CI/CD administration",
+          "file": "pipeline.spec.ts",
+          "line": 3,
+          "column": 6,
+          "specs": [
+            {
+              "title": "runs, shows logs, deploys two tested releases and rolls back at 320px",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1138,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:24.667Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7df0157fa3d95ec90e97-b6aeb5ac11be5e11b58b",
+              "file": "pipeline.spec.ts",
+              "line": 13,
+              "column": 3
+            },
+            {
+              "title": "failed builds stay undeployable, cancellation and refresh errors are recoverable",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 723,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:25.809Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYWRtaW4vcGlwZWxpbmU6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7df0157fa3d95ec90e97-442e9bb053856060ab5e",
+              "file": "pipeline.spec.ts",
+              "line": 49,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "resume.spec.ts",
+      "file": "resume.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "desktop empty dashboard",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 253,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:26.682Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-ed9baaa721a654b6a83f",
+          "file": "resume.spec.ts",
+          "line": 40,
+          "column": 1
+        },
+        {
+          "title": "resume lifecycle: upload, source edits, tailoring, statuses, PDF, filters, persistence and deletion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1822,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:26.938Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS92ZXJzaW9ucy8wNjk2ZWIyYi03YWZkLTQ3YzQtYmUyYi1iODc3NGZiYTZiZTY6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-50dd7764bd4bb066cb65",
+          "file": "resume.spec.ts",
+          "line": 48,
+          "column": 1
+        },
+        {
+          "title": "French job creates paired drafts with independent edits, Unicode PDFs, persistent links and deletion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1501,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:28.763Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS92ZXJzaW9ucy80YzYwMzNlNS03Y2I5LTQ3ZmYtYTU0YS0wOGYyMzA5NTAxMWU6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-419301927e36a8c12c17",
+          "file": "resume.spec.ts",
+          "line": 184,
+          "column": 1
+        },
+        {
+          "title": "paired switch cancels or discards unsaved changes and only links the same generation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 996,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:30.268Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-788a1adfb7964bd1c62e",
+          "file": "resume.spec.ts",
+          "line": 307,
+          "column": 1
+        },
+        {
+          "title": "legacy saved versions still open and export without language metadata or filename suffix",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 484,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:31.268Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-6cae6a735b2ab6675d25",
+          "file": "resume.spec.ts",
+          "line": 372,
+          "column": 1
+        },
+        {
+          "title": "invalid PDF uploads show actionable errors and do not change the workspace",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 971,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:31.756Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZTogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAwIChCYWQgUmVxdWVzdCkiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZTogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAwIChCYWQgUmVxdWVzdCkiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYmFzZTogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAwIChCYWQgUmVxdWVzdCkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogW10KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-fda322ca0475a08d1525",
+          "file": "resume.spec.ts",
+          "line": 400,
+          "column": 1
+        },
+        {
+          "title": "AI settings persist preferences but keep API keys in memory only",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 495,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:32.730Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-3d234926ef986f0ea4b6",
+          "file": "resume.spec.ts",
+          "line": 424,
+          "column": 1
+        },
+        {
+          "title": "320px cover letter lifecycle: typed generation, paragraphs, saved PDF, snapshots, filters and isolated deletion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1354,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:35.876Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS92ZXJzaW9ucy9iZjIxMzQyOC04NWNjLTQ1MTAtYjM3Yi1iZDk1Njg4YmUxMDI6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-99d1988495960dc885cb",
+          "file": "resume.spec.ts",
+          "line": 528,
+          "column": 1
+        },
+        {
+          "title": "French cover letters: complete pair, independent edits and Unicode PDFs, unsaved switch guard and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 977,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:37.234Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-f3cea7db59001dd755cd",
+          "file": "resume.spec.ts",
+          "line": 624,
+          "column": 1
+        },
+        {
+          "title": "cover letter OpenAI consent is explicit, resets on either type switch and is never persisted",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 869,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:38.214Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-6190260d1583536aa7c5",
+          "file": "resume.spec.ts",
+          "line": 717,
+          "column": 1
+        },
+        {
+          "title": "failed cover letter generation shows an actionable error, saves nothing and can retry",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 447,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:39.087Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvdmVyc2lvbnM6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMiAoQmFkIEdhdGV3YXkpIgogIF0sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2352191a150b5313c38a-3e0aa6a6163b70a87b61",
+          "file": "resume.spec.ts",
+          "line": 773,
+          "column": 1
+        }
+      ],
+      "suites": [
+        {
+          "title": "mobile",
+          "file": "resume.spec.ts",
+          "line": 452,
+          "column": 6,
+          "specs": [
+            {
+              "title": "320px paired language controls, previews and cards have no overflow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 714,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:33.228Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2352191a150b5313c38a-6b44c694ff99f2c65650",
+              "file": "resume.spec.ts",
+              "line": 455,
+              "column": 5
+            },
+            {
+              "title": "390px paired language controls, previews and cards have no overflow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 728,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:33.946Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2352191a150b5313c38a-3821ddd7237675ef38cd",
+              "file": "resume.spec.ts",
+              "line": 455,
+              "column": 5
+            },
+            {
+              "title": "navigation, upload, tailoring and dialogs fit narrow viewports",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 925,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:34.678Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2352191a150b5313c38a-506edcd305cdd29935eb",
+              "file": "resume.spec.ts",
+              "line": 489,
+              "column": 3
+            },
+            {
+              "title": "320px viewport has no horizontal overflow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 265,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-04T15:56:35.608Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "2352191a150b5313c38a-605bcd4905363fb463f4",
+              "file": "resume.spec.ts",
+              "line": 521,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "translation.spec.ts",
+      "file": "translation.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "base translations: independent Chinese and English drafts, Unicode PDFs, edits, reload and result-only deletion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1619,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:39.546Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS92ZXJzaW9ucy8wYjg1NDc0OS03MGYxLTQwNTYtYTdhNC0yNmE2NjAwMDgwNjE6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5668e2f0ecfbb9dee1c-b89e60a2b4dab211113a",
+          "file": "translation.spec.ts",
+          "line": 84,
+          "column": 1
+        },
+        {
+          "title": "legacy resume translation uses saved edits, cancellation restores selection and source deletion retains both snapshots",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1162,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:41.168Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS92ZXJzaW9ucy8zNTRkMTlmZi00ZjBhLTQ3MmUtOTBlNS03ZmNlNGQzNmVjNDc6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5668e2f0ecfbb9dee1c-447e04b21655ccc3bdb9",
+          "file": "translation.spec.ts",
+          "line": 147,
+          "column": 1
+        },
+        {
+          "title": "saved bilingual resume translation stays outside language pairs and cancellation restores the selected counterpart",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 682,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:42.334Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5668e2f0ecfbb9dee1c-bf43c88df63bb4aacfda",
+          "file": "translation.spec.ts",
+          "line": 202,
+          "column": 1
+        },
+        {
+          "title": "cover letter translation preserves type, saved body, metadata and Chinese PDF through edit and reload",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 964,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:43.019Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5668e2f0ecfbb9dee1c-10b4d7991d24f7de3ed7",
+          "file": "translation.spec.ts",
+          "line": 234,
+          "column": 1
+        },
+        {
+          "title": "OpenAI translation requires fresh consent, resets on target and key changes and sends only source identity",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1123,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:43.987Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBZG1pbkFib3J0cyI6IFtdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5668e2f0ecfbb9dee1c-1b6604c2872e10d770fc",
+          "file": "translation.spec.ts",
+          "line": 276,
+          "column": 1
+        },
+        {
+          "title": "320px translation failure and retry: busy guard, no saved failure, four tabs, editor and cards without overflow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 893,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-04T15:56:45.113Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvdHJhbnNsYXRpb25zOiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA1MDIgKEJhZCBHYXRld2F5KSIKICBdLAogICJ1bmV4cGVjdGVkIjogW10sCiAgImV4dGVybmFsUmVxdWVzdHMiOiBbXSwKICAiZmFpbGVkUmVxdWVzdHMiOiBbXSwKICAiY29tcGxldGVkRGVsZXRlQWJvcnRzIjogW10sCiAgImNvbXBsZXRlZEF1dGhBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5668e2f0ecfbb9dee1c-978b01bcf6e4318604e1",
+          "file": "translation.spec.ts",
+          "line": 346,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-04T15:55:56.660Z",
+    "duration": 49586.13,
+    "expected": 62,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

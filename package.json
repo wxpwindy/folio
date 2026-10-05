@@ -1,0 +1,54 @@
+{
+  "name": "resumeapp",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"tsx watch server/index.ts\" \"vite\"",
+    "build": "tsc -b && tsc -p tsconfig.server.json && vite build",
+    "start": "tsx server/index.ts",
+    "admin:init": "tsx server/admin-init.ts",
+    "ci:local": "tsx server/pipeline-cli.ts",
+    "test": "tsx --test server/*.test.ts",
+    "test:e2e": "npm run build && playwright test",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "cookie": "^2.0.1",
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "fontkit": "^2.0.4",
+    "libphonenumber-js": "^1.13.14",
+    "lucide-react": "^1.48.0",
+    "multer": "^2.4.0",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.20.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/express": "^5.0.6",
+    "@types/fontkit": "^2.0.9",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^24.13.3",
+    "@types/pdfkit": "^0.17.6",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@types/supertest": "^7.2.1",
+    "@vitejs/plugin-react": "^6.1.1",
+    "concurrently": "^10.0.5",
+    "oxlint": "^1.81.0",
+    "supertest": "^7.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0"
+  }
+}
