@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDownToLine, ArrowRight, ArrowUpRight, BriefcaseBusiness, Check, ChevronRight, Clock3, FileCheck2, FileText, FolderOpen, Layers3, LayoutGrid, LoaderCircle, LockKeyhole, Plus, Search, Settings2, ShieldCheck, Sparkles, Upload, X } from 'lucide-react'
-import type { AuthSession, AuthUser, BaseResume, DocumentType, FeatureState, Settings, TranslationSource, TranslationTargetLanguage, Workspace } from './types'
+import type { AuthSession, AuthUser, BaseResume, DocumentType, FeatureState, LoyaltyState, Settings, TranslationSource, TranslationTargetLanguage, Workspace } from './types'
 import { Administration, PasswordChange } from './Admin'
 import { Chat } from './Chat'
 import { CareerPath } from './CareerPath'
 import { MessageCircle } from 'lucide-react'
-import { date, downloadPdf, errorMessage, getFeatures, request } from './api'
-import { GenerateForm, InlineError, ResumePaper, SettingsForm, TranslationActions, TranslationForm, UploadArea, VersionDetail } from './components'
+import { date, downloadPdf, errorMessage, getFeatures, getLoyalty, request, setLoyaltyEnrollment } from './api'
+import { CleanResumeForm, GenerateForm, InlineError, ResumePaper, SettingsForm, TranslationActions, TranslationForm, UploadArea, VersionDetail } from './components'
 import './App.css'
 
-const defaults: Settings = { provider: 'ollama', ollamaModel: '', openaiModel: '', apiKey: '' }
+const defaults: Settings = { provider: 'ollama', ollamaModel: '', openaiModel: '', lmstudioModel: '', apiKey: '' }
 function loadSettings(userId: string): Settings {
   try {
     const saved = JSON.parse(localStorage.getItem(`folio-ai-settings:${userId}`) || '{}')
-    return { ...defaults, provider: saved.provider === 'openai' ? 'openai' : 'ollama',
+    return { ...defaults, provider: saved.provider === 'lmstudio' ? 'lmstudio' : saved.provider === 'openai' ? 'openai' : 'ollama',
       ollamaModel: typeof saved.ollamaModel === 'string' ? saved.ollamaModel : '',
+      lmstudioModel: typeof saved.lmstudioModel === 'string' ? saved.lmstudioModel : '',
+      lmstudioDefaultModel: typeof saved.lmstudioDefaultModel === 'string' ? saved.lmstudioDefaultModel : undefined,
       openaiModel: typeof saved.openaiModel === 'string' ? saved.openaiModel : '' }
   } catch { return defaults }
 }
@@ -30,7 +32,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
   const [page, setPage] = useState<'overview' | 'versions' | 'base' | 'chat'>('overview')
   const [chatActive, setChatActive] = useState(false)
   const [settings, setSettings] = useState<Settings>(() => loadSettings(user.id))
-  const [modal, setModal] = useState<'settings' | 'generate' | null>(null)
+  const [modal, setModal] = useState<'settings' | 'generate' | 'clean' | null>(null)
   const [translation, setTranslation] = useState<{ source: TranslationSource; targetLanguage: TranslationTargetLanguage } | null>(null)
   const [initialDocumentType, setInitialDocumentType] = useState<DocumentType>('resume')
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -43,10 +45,13 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
   const [careerRefreshing, setCareerRefreshing] = useState(false)
   const careerRequest = useRef<AbortController | null>(null)
   const [loggingOut, setLoggingOut] = useState(false)
+  const [loyalty, setLoyalty] = useState<LoyaltyState | null>(null)
+  const [membershipSaving, setMembershipSaving] = useState(false)
   const logoutPending = useRef(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const base = workspace?.base, versions = workspace?.versions || []
   const selected = versions.find(version => version.id === selectedId)
+  const cleanBaseVersions = versions.filter(version => version.cleanBase && version.baseId === base?.id)
   const baseDirty = baseEditing && baseDraft !== base?.text
   const logoutBlocked = !!(modal || translation || selectedId || baseSaving || uploading || baseDownloading || careerRefreshing)
   const careerRefreshBlocked = baseDirty ? 'Save or discard your base resume edits before regenerating.'
@@ -55,10 +60,19 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
   const logoutHint = logoutBlocked ? 'Close documents and dialogs, and finish saving, uploading, or downloading before signing out.' : ''
   useEffect(() => {
     let active = true
-    void request<Workspace>('/workspace').then(data => {
+    void Promise.all([request<Workspace>('/workspace'), getLoyalty()]).then(([data, loyaltyState]) => {
       if (!active) return
       setWorkspace(data)
-      setSettings(old => ({ ...old, ollamaModel: old.ollamaModel || data.config.ollamaModel, openaiModel: old.openaiModel || data.config.openaiModel }))
+      setLoyalty(loyaltyState)
+      setSettings(old => ({ ...old,
+        // Activate the installation's LM Studio default once for legacy preferences.
+        // Follow a changed installation model default, but retain custom models.
+        // The recorded default also lets users explicitly reselect an older model.
+        provider: data.config.defaultProvider === 'lmstudio' && !old.lmstudioModel ? 'lmstudio' : old.provider,
+        lmstudioModel: !old.lmstudioModel || (data.config.defaultProvider === 'lmstudio' && old.lmstudioModel === (old.lmstudioDefaultModel || 'google/gemma-4-12b'))
+          ? data.config.lmstudioModel : old.lmstudioModel,
+        lmstudioDefaultModel: data.config.lmstudioModel,
+        ollamaModel: old.ollamaModel || data.config.ollamaModel, openaiModel: old.openaiModel || data.config.openaiModel }))
     }).catch(e => { if (active) setError(errorMessage(e)) })
     return () => { active = false }
   }, [connectionAttempt])
@@ -99,7 +113,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     }
   }, [accountPage, connectionAttempt, featureAttempt])
   useEffect(() => {
-    try { localStorage.setItem(`folio-ai-settings:${user.id}`, JSON.stringify({ provider: settings.provider, ollamaModel: settings.ollamaModel, openaiModel: settings.openaiModel })) } catch { /* Private browsing may disable storage. */ }
+    try { localStorage.setItem(`folio-ai-settings:${user.id}`, JSON.stringify({ provider: settings.provider, ollamaModel: settings.ollamaModel, openaiModel: settings.openaiModel, lmstudioModel: settings.lmstudioModel, lmstudioDefaultModel: settings.lmstudioDefaultModel })) } catch { /* Private browsing may disable storage. */ }
   }, [settings, user.id])
   useEffect(() => {
     if (!notice) return
@@ -107,7 +121,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     return () => clearTimeout(timer)
   }, [notice])
   useEffect(() => {
-    const handle = (event: BeforeUnloadEvent) => { if (baseDirty || modal === 'generate' || selectedId || translation) event.preventDefault() }
+    const handle = (event: BeforeUnloadEvent) => { if (baseDirty || modal === 'generate' || modal === 'clean' || selectedId || translation) event.preventDefault() }
     window.addEventListener('beforeunload', handle)
     return () => window.removeEventListener('beforeunload', handle)
   }, [baseDirty, modal, selectedId, translation])
@@ -136,6 +150,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     try {
       const form = new FormData(); form.append('resume', file)
       const uploaded = await request<BaseResume>('/base', { method: 'POST', body: form })
+      void getLoyalty().then(setLoyalty).catch(() => {})
       setWorkspace(old => old && ({ ...old, base: uploaded })); setBaseEditing(false)
       setNotice('Base resume imported. Review the extracted text before tailoring.'); setPage('base')
     } catch (e) { setError(errorMessage(e)) } finally { setUploading(false) }
@@ -145,6 +160,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     setBaseSaving(true); setError('')
     try {
       const updated = await request<BaseResume>(`/base/${base.id}`, { method: 'PATCH', body: JSON.stringify({ text: baseDraft }) })
+      void getLoyalty().then(setLoyalty).catch(() => {})
       setWorkspace(old => old && ({ ...old, base: updated })); setBaseEditing(false); setNotice('Base text saved. Future versions will use these changes.')
     } catch (e) { setError(errorMessage(e)) } finally { setBaseSaving(false) }
   }
@@ -183,6 +199,20 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     if (!base) { inputRef.current?.click(); return }
     setInitialDocumentType(documentType); setModal('generate')
   }
+  async function setMembership(enrolled: boolean) {
+    if (membershipSaving) return
+    setMembershipSaving(true)
+    setError('')
+    try {
+      const updated = await setLoyaltyEnrollment(enrolled)
+      setLoyalty(updated)
+      setNotice(enrolled ? 'Membership enrolled.' : 'Membership paused.')
+    } catch (e) {
+      setError(errorMessage(e))
+    } finally {
+      setMembershipSaving(false)
+    }
+  }
   const filtered = versions.filter(version => `${version.role} ${version.company} ${version.language?.name || ''}`.toLowerCase().includes(query.toLowerCase())
     && (filter === 'all' || version.status === filter)
     && (documentFilter === 'all' || (version.documentType ?? 'resume') === documentFilter))
@@ -220,6 +250,13 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
           {page === 'base' ? <section className="base-page">{base ? <>
             <div className="base-document-heading"><div className="file-icon"><FileText size={25} /></div><div><h2>{base.filename}</h2><p>{base.pages} {base.pages === 1 ? 'page' : 'pages'} · Added {date(base.createdAt)}</p></div><button className="button secondary" disabled={uploading} onClick={() => inputRef.current?.click()}><Upload size={16} />Replace PDF</button><button className="button secondary" disabled={baseDownloading || uploading} onClick={() => void downloadBase()}><ArrowDownToLine size={16} />Original PDF</button></div>
             <TranslationActions dirty={baseDirty} busy={baseSaving || uploading || baseDownloading || !!translation} onTranslate={translateBase} />
+            <section className="clean-base-section" aria-label="Clean base resumes">
+              <div className="section-heading"><div><h2>Clean base resumes</h2><p>Complete English and Simplified Chinese drafts. Review, edit and export each independently.</p></div><button className="button primary" disabled={baseDirty || baseSaving || uploading || baseDownloading || careerRefreshing || !!modal || !!translation} onClick={() => setModal('clean')}><Sparkles size={17} />Create clean English + Chinese</button></div>
+              <p className="field-hint">{baseDirty ? 'Save or discard your base resume edits before generating clean versions.' : 'AI improves formatting and wording without job tailoring. Your original and any existing edits are kept.'}</p>
+              {cleanBaseVersions.length > 0 && <div className="clean-base-grid">{cleanBaseVersions.map(version => <button key={version.id} className="clean-base-card" onClick={() => setSelectedId(version.id)}>
+                <span className="language-badge">{version.language?.name}</span><strong>{version.role}</strong><span>{date(version.createdAt)} · {version.status}</span><span className="text-button">Open and edit<ArrowUpRight size={15} /></span>
+              </button>)}</div>}
+            </section>
             <CareerPath text={base.text} onRegenerate={regenerateCareer} disabledReason={careerRefreshBlocked} />
             <div className="base-note"><ShieldCheck size={18} /><p>Review the extracted text below. Fix any PDF formatting issues before creating a version. Text edits affect future generations only; the original PDF and existing versions stay unchanged.</p></div>
             <div className="document-toolbar"><span>{baseEditing ? 'EDIT EXTRACTED TEXT' : 'EXTRACTED RESUME'}</span>{baseEditing ? <div className="button-row"><button className="text-button" onClick={() => { if (!baseDirty || window.confirm('Discard your unsaved base resume changes?')) setBaseEditing(false) }} disabled={baseSaving}>Cancel</button><button className="button primary small" onClick={() => void saveBase()} disabled={baseSaving || careerRefreshing}>{baseSaving ? <LoaderCircle className="spin" size={15} /> : <Check size={15} />}Save text</button></div> : <button className="text-button" disabled={careerRefreshing} onClick={() => { setBaseDraft(base.text); setBaseEditing(true) }}>Edit extracted text</button>}</div>
@@ -233,10 +270,11 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
                 {version.documentType === 'cover-letter' && <span className="document-type-badge">Cover letter</span>}
                 {version.language && <span className="language-badge">{version.language.name}</span>}
                 {version.translation && <span className="translation-badge">Translation</span>}
+                {version.cleanBase && <span className="translation-badge">Clean base</span>}
                 <div className="version-keywords">{version.keywords.slice(0, 3).map((word, i) => <span key={i}>{word}</span>)}</div><div className="version-bottom"><span><Clock3 size={13} />{date(version.createdAt)}</span><ArrowUpRight size={17} /></div>
               </button>)}</div> : <div className="empty-state"><div className="empty-icon"><Layers3 size={29} /><span><Plus size={12} /></span></div><h3>{versions.length ? 'No versions found' : 'Your next chapter starts here.'}</h3><p>{versions.length ? 'Try another search, document type, or status.' : 'Turn your base resume into a tailored resume or cover letter for the role you have in mind.'}</p><button className="button secondary" onClick={versions.length ? () => { setQuery(''); setFilter('all'); setDocumentFilter('all') } : () => newVersion(documentFilter === 'cover-letter' ? 'cover-letter' : 'resume')} disabled={uploading}>{versions.length ? 'Clear filters' : <><Plus size={16} />{documentFilter === 'cover-letter' ? 'Create your first cover letter' : 'Create your first version'}</>}</button></div>}
             </section>
-            {page === 'overview' && <aside className="context-column"><section className="base-summary"><div className="section-heading"><h2>Your foundation</h2><span className="subtle-icon"><FileText size={18} /></span></div>{base ? <><div className="base-file"><div className="file-icon"><FileText size={24} /></div><div><strong>{base.filename}</strong><span>{base.pages} {base.pages === 1 ? 'page' : 'pages'} · PDF document</span></div><span className="success-icon"><Check size={15} /></span></div><p>Your source of truth. Every new version starts with this experience.</p><button className="button secondary full-width" onClick={() => navigate('base')}>View base resume<ArrowUpRight size={15} /></button></> : <UploadArea compact dragging={dragging} uploading={uploading} onDrag={setDragging} onUpload={upload} onBrowse={() => inputRef.current?.click()} />}</section><section className="how-it-works"><span className="eyebrow">FROM EXPERIENCE TO OPPORTUNITY</span><h3>A simpler way to apply.</h3><ol><li><span>01</span><div><strong>Start with your story</strong><p>Upload your base resume as a PDF.</p></div></li><li><span>02</span><div><strong>Add the opportunity</strong><p>Paste a job description. AI brings your relevant experience forward.</p></div></li><li><span>03</span><div><strong>Make it yours</strong><p>Review, refine, and export a resume ready for the next step.</p></div></li></ol></section></aside>}
+            {page === 'overview' && <aside className="context-column"><section className="base-summary"><div className="section-heading"><h2>Your foundation</h2><span className="subtle-icon"><FileText size={18} /></span></div>{base ? <><div className="base-file"><div className="file-icon"><FileText size={24} /></div><div><strong>{base.filename}</strong><span>{base.pages} {base.pages === 1 ? 'page' : 'pages'} · PDF document</span></div><span className="success-icon"><Check size={15} /></span></div><p>Your source of truth. Every new version starts with this experience.</p><button className="button secondary full-width" onClick={() => navigate('base')}>View base resume<ArrowUpRight size={15} /></button></> : <UploadArea compact dragging={dragging} uploading={uploading} onDrag={setDragging} onUpload={upload} onBrowse={() => inputRef.current?.click()} />}</section>{loyalty && <section className="base-summary"><div className="section-heading"><h2>Membership</h2><span className="subtle-icon"><Sparkles size={18} /></span></div><p>{loyalty.profile.enrolled ? `Enrolled · Tier ${loyalty.profile.tier}` : 'Not enrolled'}</p><p>Points: <strong>{loyalty.profile.points}</strong></p><p>Per save/create at your tier: {Math.round(loyalty.settings.basePoints * loyalty.settings.factors[loyalty.profile.tier])} points</p><button className="button secondary full-width" disabled={membershipSaving} onClick={() => void setMembership(!loyalty.profile.enrolled)}>{membershipSaving ? 'Updating…' : loyalty.profile.enrolled ? 'Pause membership' : 'Enroll membership'}</button></section>}<section className="how-it-works"><span className="eyebrow">FROM EXPERIENCE TO OPPORTUNITY</span><h3>A simpler way to apply.</h3><ol><li><span>01</span><div><strong>Start with your story</strong><p>Upload your base resume as a PDF.</p></div></li><li><span>02</span><div><strong>Add the opportunity</strong><p>Paste a job description. AI brings your relevant experience forward.</p></div></li><li><span>03</span><div><strong>Make it yours</strong><p>Review, refine, and export a resume ready for the next step.</p></div></li></ol></section></aside>}
           </div>}
           <footer className="page-footer"><span><LockKeyhole size={13} />Locally stored. Thoughtfully tailored.</span><span>Built around your next chapter.</span></footer>
         </>}
@@ -244,13 +282,20 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     </div>
     {notice && <div className="toast" role="status"><Check size={18} />{notice}<button className="icon-button" aria-label="Dismiss notification" onClick={() => setNotice('')}><X size={15} /></button></div>}
     {modal === 'settings' && workspace && <SettingsForm settings={settings} configured={workspace.config.openaiConfigured} onClose={() => setModal(null)} onSave={value => { setSettings(value); setModal(null); setNotice('AI preferences saved. API keys are kept in memory only.') }} />}
+    {modal === 'clean' && base && workspace && <CleanResumeForm base={base} settings={settings} configured={workspace.config.openaiConfigured} onClose={() => setModal(null)} onCreated={created => {
+      void getLoyalty().then(setLoyalty).catch(() => {})
+      setWorkspace(old => old && ({ ...old, versions: [...created, ...old.versions] })); setModal(null); setSelectedId(created[0].id)
+      setNotice('Clean English and Chinese base resumes saved. Review and edit each language independently.')
+    }} />}
     {modal === 'generate' && base && workspace && <GenerateForm base={base} settings={settings} configured={workspace.config.openaiConfigured} initialDocumentType={initialDocumentType} onClose={() => setModal(null)} onCreated={created => {
+      void getLoyalty().then(setLoyalty).catch(() => {})
       setWorkspace(old => old && ({ ...old, versions: [...created, ...old.versions] })); setModal(null); setSelectedId(created[0].id)
       setNotice(created[0].documentType === 'cover-letter'
         ? (created.length > 1 ? `${created[0].language?.name} and English cover letter drafts are ready. Review both before applying.` : 'Your English cover letter draft is ready. Review it before applying.')
         : (created.length > 1 ? `${created[0].language?.name} and English drafts are ready. Review both before applying.` : 'Your English draft is ready. Review it before applying.'))
     }} />}
     {translation && workspace && <TranslationForm source={translation.source} initialTargetLanguage={translation.targetLanguage} settings={settings} configured={workspace.config.openaiConfigured} onClose={() => setTranslation(null)} onCreated={version => {
+      void getLoyalty().then(setLoyalty).catch(() => {})
       setWorkspace(old => old && ({ ...old, versions: [version, ...old.versions.filter(item => item.id !== version.id)] }))
       setTranslation(null); setSelectedId(version.id)
       setNotice(`Your ${version.language?.name || 'translated'} ${version.documentType === 'cover-letter' ? 'cover letter' : 'resume'} translation is saved as a separate draft. Review it before sending.`)
@@ -258,7 +303,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     {/* Unmount the native detail dialog during confirmation; its saved source ID stays selected for Cancel. */}
     {selected && !translation && <VersionDetail key={selected.id} version={selected} variants={!selected.translation && selected.generationId ? versions.filter(item => !item.translation && item.generationId === selected.generationId && (item.documentType ?? 'resume') === (selected.documentType ?? 'resume')) : [selected]} onSelect={setSelectedId} onClose={() => setSelectedId(null)} onTranslate={targetLanguage => {
       setTranslation({ source: { sourceType: 'version', sourceId: selected.id, name: `${selected.role} at ${selected.company}`, documentType: selected.documentType ?? 'resume' }, targetLanguage })
-    }} onSaved={version => { setWorkspace(old => old && ({ ...old, versions: old.versions.map(item => item.id === version.id ? version : item) })); setNotice(version.documentType === 'cover-letter' ? 'Cover letter saved.' : 'Resume version saved.') }} onDeleted={id => { setWorkspace(old => old && ({ ...old, versions: old.versions.filter(item => item.id !== id) })); setSelectedId(null); setNotice(selected.documentType === 'cover-letter' ? 'Cover letter deleted.' : 'Resume version deleted.') }} />}
+    }} onSaved={version => { void getLoyalty().then(setLoyalty).catch(() => {}); setWorkspace(old => old && ({ ...old, versions: old.versions.map(item => item.id === version.id ? version : item) })); setNotice(version.documentType === 'cover-letter' ? 'Cover letter saved.' : 'Resume version saved.') }} onDeleted={id => { setWorkspace(old => old && ({ ...old, versions: old.versions.filter(item => item.id !== id) })); setSelectedId(null); setNotice(selected.documentType === 'cover-letter' ? 'Cover letter deleted.' : 'Resume version deleted.') }} />}
   </div>
 }
 export default App

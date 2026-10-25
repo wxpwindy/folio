@@ -17,7 +17,14 @@ export interface AuthUser {
   mustChangePassword: boolean
 }
 
-type UserRow = Omit<AuthUser, 'mustChangePassword'> & { mustChangePassword: number; password_hash: string; disabled: number }
+type UserRow = Omit<AuthUser, 'mustChangePassword'> & {
+  mustChangePassword: number
+  password_hash: string
+  disabled: number
+  membershipEnrolled?: number
+  membershipTier?: number
+  membershipPoints?: number
+}
 const cookieName = 'folio_session'
 const sessionSeconds = 7 * 24 * 60 * 60
 const scryptOptions = { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 }
@@ -157,7 +164,9 @@ export function installAuth(app: Express, db: DatabaseSync, resetSetup?: () => v
   // protected legacy claim. Public signup cannot create username accounts.
   const countUsers = db.prepare("SELECT COUNT(*) AS count FROM users WHERE method != 'username'")
   const getSetup = db.prepare('SELECT code_hash FROM account_setup WHERE id = 1')
-  const columns = 'id, method, identifier, password_hash, created_at AS createdAt, role, disabled, must_change_password AS mustChangePassword'
+  const columns = `id, method, identifier, password_hash, created_at AS createdAt, role, disabled,
+    must_change_password AS mustChangePassword, membership_enrolled AS membershipEnrolled,
+    membership_tier AS membershipTier, membership_points AS membershipPoints`
   const findUser = db.prepare(`SELECT ${columns} FROM users WHERE method = ? AND identifier = ?`)
   const findById = db.prepare(`SELECT ${columns} FROM users WHERE id = ?`)
   const findSession = db.prepare(`SELECT u.id, u.method, u.identifier, u.created_at AS createdAt, u.role,
@@ -326,7 +335,13 @@ export function installAuth(app: Express, db: DatabaseSync, resetSetup?: () => v
   app.use('/api/admin', (req, _res, next) => { requireCurrentSession(req, true); next() })
   app.get('/api/admin/users', (_req, res) => {
     const users = db.prepare(`SELECT ${columns} FROM users ORDER BY created_at, id`).all() as unknown as UserRow[]
-    res.json({ users: users.map(row => ({ ...publicUser(row), disabled: Boolean(row.disabled) })) })
+    res.json({ users: users.map(row => ({
+      ...publicUser(row),
+      disabled: Boolean(row.disabled),
+      membershipEnrolled: Boolean(row.membershipEnrolled),
+      membershipTier: (row.membershipTier || 1) as 1 | 2 | 3 | 4,
+      membershipPoints: Number(row.membershipPoints || 0),
+    })) })
   })
   app.get('/api/admin/setup', (_req, res) => {
     res.json({ claimPending: firstAccount(), initialized: Boolean(getSetup.get()), available: Boolean(resetSetup) })

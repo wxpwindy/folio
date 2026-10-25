@@ -1,4 +1,4 @@
-import type { FeatureState } from './types'
+import type { FeatureState, LoyaltyAuditEvent, LoyaltySettings, LoyaltyState } from './types'
 
 export const SESSION_EXPIRED_EVENT = 'folio:session-expired'
 let sessionRequests = new AbortController()
@@ -88,4 +88,22 @@ export async function setFeature(key: string, value: boolean): Promise<FeatureSt
 }
 export async function deleteFeature(key: string): Promise<{ deleted: string }> {
   return request(`/features/${encodeURIComponent(key)}`, { method: 'DELETE' })
+}
+export async function getLoyalty(): Promise<LoyaltyState> {
+  return request<LoyaltyState>('/loyalty/me')
+}
+export async function setLoyaltyEnrollment(enrolled: boolean): Promise<LoyaltyState> {
+  return request<LoyaltyState>('/loyalty/me', { method: 'PATCH', body: JSON.stringify({ enrolled }) })
+}
+export async function getLoyaltySettings(): Promise<LoyaltySettings> {
+  return request<LoyaltySettings>('/admin/loyalty/settings')
+}
+export async function updateLoyaltySettings(settings: LoyaltySettings): Promise<LoyaltySettings> {
+  return request<LoyaltySettings>('/admin/loyalty/settings', { method: 'PATCH', body: JSON.stringify(settings) })
+}
+export async function updateUserLoyalty(userId: string, payload: { tier: 1 | 2 | 3 | 4; enrolled?: boolean }) {
+  return request(`/admin/users/${encodeURIComponent(userId)}/loyalty`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+export async function getLoyaltyEvents(limit = 25): Promise<LoyaltyAuditEvent[]> {
+  return (await request<{ events: LoyaltyAuditEvent[] }>(`/admin/loyalty/events?limit=${encodeURIComponent(String(limit))}`)).events
 }

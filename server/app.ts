@@ -12,11 +12,95 @@ import { installAuth } from './auth.ts'
 import type { AuthRateLimitStores } from './auth.ts'
 import { rateLimit } from 'express-rate-limit'
 import type { Store as RateLimitStore } from 'express-rate-limit'
-import { chatService, chatInputSchema, chatOutputSchema, chatModelsSchema } from './chat.ts'
+import { chatService, chatInputSchema, chatOutputSchema, chatModelsSchema, listChatModels } from './chat.ts'
 import { installPipelineApi } from './pipeline-api.ts'
 import type { PipelineService } from './pipeline.ts'
+import { ollamaModels } from './ollama.ts'
+import { extractJobDescription } from './job-description.ts'
+import { cleanResume, cleanResumeSchema, cleanResumeOutputSchema, invalidCleanResumeMessage } from './clean-resume.ts'
 
-export function createApp(store: Store, generate: typeof generateResume = generateResume, translate: typeof translateDocument = translateDocument, resetSetup?: () => void, chat: typeof chatService = chatService, chatRateLimitStore?: RateLimitStore, authRateLimitStores?: AuthRateLimitStores, pipeline?: PipelineService) {
+const membershipSettingsSchema = z.object({
+  basePoints: z.number().int().min(0).max(10000),
+  factors: z.object({
+    1: z.number().min(0).max(10),
+    2: z.number().min(0).max(10),
+    3: z.number().min(0).max(10),
+    4: z.number().min(0).max(10),
+  }).strict(),
+}).strict()
+
+const loyaltyEventType = z.union([z.literal('settings_updated'), z.literal('user_membership_updated')])
+
+function writeLoyaltyEvent(db: Store['db'], event: {
+  type: z.infer<typeof loyaltyEventType>
+  actorUserId: string
+  targetUserId?: string
+  payload: Record<string, unknown>
+}) {
+  db.prepare(`INSERT INTO loyalty_events(event_type, actor_user_id, target_user_id, payload, created_at)
+    VALUES (?, ?, ?, ?, ?)`)
+    .run(event.type, event.actorUserId, event.targetUserId ?? null, JSON.stringify(event.payload), new Date().toISOString())
+}
+
+function listLoyaltyEvents(db: Store['db'], limit = 25) {
+  const safeLimit = Math.max(1, Math.min(100, Math.trunc(limit) || 25))
+  const rows = db.prepare(`SELECT e.id, e.event_type AS eventType, e.created_at AS createdAt, e.payload,
+      actor.identifier AS actorIdentifier, target.identifier AS targetIdentifier
+    FROM loyalty_events e
+    JOIN users actor ON actor.id = e.actor_user_id
+    LEFT JOIN users target ON target.id = e.target_user_id
+    ORDER BY e.created_at DESC, e.id DESC
+    LIMIT ?`).all(safeLimit) as Array<{
+      id: number
+      eventType: 'settings_updated' | 'user_membership_updated'
+      createdAt: string
+      payload: string
+      actorIdentifier: string
+      targetIdentifier: string | null
+    }>
+  return rows.map(row => {
+    let payload: unknown = {}
+    try { payload = JSON.parse(row.payload) } catch { payload = {} }
+    return {
+      id: row.id,
+      eventType: row.eventType,
+      createdAt: row.createdAt,
+      actorIdentifier: row.actorIdentifier,
+      targetIdentifier: row.targetIdentifier,
+      payload,
+    }
+  })
+}
+
+function getMembershipSettings(db: Store['db']) {
+  db.prepare(`INSERT OR IGNORE INTO membership_settings(id, base_points, tier1_factor, tier2_factor, tier3_factor, tier4_factor)
+    VALUES (1, 10, 1, 1.2, 1.3, 1.4)`).run()
+  const row = db.prepare(`SELECT base_points AS basePoints, tier1_factor AS tier1,
+    tier2_factor AS tier2, tier3_factor AS tier3, tier4_factor AS tier4
+    FROM membership_settings WHERE id = 1`).get() as { basePoints: number; tier1: number; tier2: number; tier3: number; tier4: number }
+  return { basePoints: row.basePoints, factors: { 1: row.tier1, 2: row.tier2, 3: row.tier3, 4: row.tier4 } }
+}
+
+function loyaltyProfile(db: Store['db'], userId: string) {
+  const row = db.prepare(`SELECT membership_enrolled AS enrolled, membership_tier AS tier, membership_points AS points
+    FROM users WHERE id = ?`).get(userId) as { enrolled: number; tier: number; points: number } | undefined
+  if (!row) throw new AppError(404, 'Account not found.')
+  return { enrolled: Boolean(row.enrolled), tier: row.tier as 1 | 2 | 3 | 4, points: row.points }
+}
+
+function awardMembershipPoints(db: Store['db'], userId: string, units = 1) {
+  if (units <= 0) return 0
+  const profile = loyaltyProfile(db, userId)
+  if (!profile.enrolled) return 0
+  const settings = getMembershipSettings(db)
+  const factor = settings.factors[profile.tier]
+  const perAction = Math.round(settings.basePoints * factor)
+  const earned = Math.max(0, perAction * units)
+  if (earned > 0) db.prepare('UPDATE users SET membership_points = membership_points + ? WHERE id = ?').run(earned, userId)
+  return earned
+}
+
+export function createApp(store: Store, generate: typeof generateResume = generateResume, translate: typeof translateDocument = translateDocument, resetSetup?: () => void, chat: typeof chatService = chatService, chatRateLimitStore?: RateLimitStore, authRateLimitStores?: AuthRateLimitStores, pipeline?: PipelineService, clean: typeof cleanResume = cleanResume) {
   const app = express()
   app.disable('x-powered-by')
   app.use((req, res, next) => {
@@ -92,13 +176,89 @@ export function createApp(store: Store, generate: typeof generateResume = genera
     store.db.prepare('DELETE FROM features WHERE key = ?').run('webChat')
     res.json({ deleted: 'webChat' })
   })
+  app.get('/api/ollama/models', async (_req, res) => {
+    res.json(await ollamaModels())
+  })
+  app.get('/api/lmstudio/models', async (_req, res) => {
+    const { models } = await listChatModels()
+    res.json({ models })
+  })
+  app.post('/api/job-description/extract', upload.single('document'), async (req, res) => {
+    if (!req.file) throw new AppError(400, 'Upload one PDF or UTF-8 text file, up to 10 MB.')
+    res.json({ text: await extractJobDescription(req.file.buffer, req.file.originalname) })
+  })
   app.get('/api/workspace', (_req, res) => {
     const store = res.locals.store as ReturnType<Store['forUser']>
     res.json({ base: store.base(), versions: store.versions(), config: {
       openaiConfigured: Boolean(process.env.OPENAI_API_KEY),
       ollamaModel: process.env.OLLAMA_MODEL || 'llama3.2',
       openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+      lmstudioModel: process.env.LMSTUDIO_MODEL || 'google/gemma-4-e4b',
+      defaultProvider: process.env.FOLIO_AI_PROVIDER === 'lmstudio' ? 'lmstudio' : 'ollama',
     } })
+  })
+  app.get('/api/loyalty/me', (_req, res) => {
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    const userId = res.locals.user.id as string
+    res.json({ profile: loyaltyProfile(store.db, userId), settings: getMembershipSettings(store.db) })
+  })
+  app.patch('/api/loyalty/me', (req, res) => {
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    const userId = res.locals.user.id as string
+    const { enrolled } = z.object({ enrolled: z.boolean() }).strict().parse(req.body)
+    store.db.prepare('UPDATE users SET membership_enrolled = ? WHERE id = ?').run(enrolled ? 1 : 0, userId)
+    res.json({ profile: loyaltyProfile(store.db, userId), settings: getMembershipSettings(store.db) })
+  })
+  app.get('/api/admin/loyalty/settings', (_req, res) => {
+    if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to manage loyalty settings.')
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    res.json(getMembershipSettings(store.db))
+  })
+  app.patch('/api/admin/loyalty/settings', (req, res) => {
+    if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to manage loyalty settings.')
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    const parsed = membershipSettingsSchema.parse(req.body)
+    store.db.prepare(`UPDATE membership_settings
+      SET base_points = ?, tier1_factor = ?, tier2_factor = ?, tier3_factor = ?, tier4_factor = ?
+      WHERE id = 1`).run(parsed.basePoints, parsed.factors[1], parsed.factors[2], parsed.factors[3], parsed.factors[4])
+    writeLoyaltyEvent(store.db, {
+      type: 'settings_updated',
+      actorUserId: res.locals.user.id as string,
+      payload: {
+        basePoints: parsed.basePoints,
+        factors: parsed.factors,
+      },
+    })
+    res.json(getMembershipSettings(store.db))
+  })
+  app.get('/api/admin/loyalty/events', (req, res) => {
+    if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to view loyalty activity.')
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    const limit = z.coerce.number().int().min(1).max(100).optional().parse(req.query.limit)
+    res.json({ events: listLoyaltyEvents(store.db, limit) })
+  })
+  app.patch('/api/admin/users/:id/loyalty', (req, res) => {
+    if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to manage user loyalty levels.')
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    const id = z.string().uuid().parse(req.params.id)
+    const payload = z.object({ tier: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)]), enrolled: z.boolean().optional() }).strict().parse(req.body)
+    const row = store.db.prepare('SELECT id FROM users WHERE id = ?').get(id) as { id: string } | undefined
+    if (!row) throw new AppError(404, 'Account not found.')
+    if (payload.enrolled === undefined) {
+      store.db.prepare('UPDATE users SET membership_tier = ? WHERE id = ?').run(payload.tier, id)
+    } else {
+      store.db.prepare('UPDATE users SET membership_tier = ?, membership_enrolled = ? WHERE id = ?').run(payload.tier, payload.enrolled ? 1 : 0, id)
+    }
+    writeLoyaltyEvent(store.db, {
+      type: 'user_membership_updated',
+      actorUserId: res.locals.user.id as string,
+      targetUserId: id,
+      payload: {
+        tier: payload.tier,
+        enrolled: payload.enrolled,
+      },
+    })
+    res.status(204).end()
   })
   app.post('/api/base', upload.single('resume'), async (req, res) => {
     const store = res.locals.store as ReturnType<Store['forUser']>
@@ -111,7 +271,9 @@ export function createApp(store: Store, generate: typeof generateResume = genera
         throw new AppError(400, 'This PDF has too little selectable text. Scanned PDFs need OCR first. Export a text-based PDF and try again.')
       }
       if (text.length > 50000 || result.total > 30) throw new AppError(400, 'This resume is too long. Use a PDF under 30 pages and 50,000 characters.')
-      res.status(201).json(store.addBase({ filename: req.file.originalname, text, pages: result.total }, req.file.buffer))
+      const created = store.addBase({ filename: req.file.originalname, text, pages: result.total }, req.file.buffer)
+      awardMembershipPoints(store.db, res.locals.user.id as string)
+      res.status(201).json(created)
     } catch (error) {
       if (error instanceof AppError) throw error
       throw new AppError(400, 'This PDF could not be read. It may be damaged or password protected. Try exporting it again.')
@@ -122,6 +284,7 @@ export function createApp(store: Store, generate: typeof generateResume = genera
     const { text } = z.object({ text: z.string().trim().min(50).max(50000) }).parse(req.body)
     const base = store.updateBase(String(req.params.id), text)
     if (!base) throw new AppError(404, 'Base resume not found.')
+    awardMembershipPoints(store.db, res.locals.user.id as string)
     res.json(base)
   })
   app.get('/api/base/:id/pdf', (req, res) => {
@@ -132,6 +295,33 @@ export function createApp(store: Store, generate: typeof generateResume = genera
     res.type('pdf').send(Buffer.from(pdf))
   })
   let generating = false
+  app.post('/api/base/clean', async (req, res) => {
+    const store = res.locals.store as ReturnType<Store['forUser']>
+    const input = cleanResumeSchema.parse(req.body)
+    const base = store.base(input.baseId)
+    if (!base) throw new AppError(404, 'Base resume not found.')
+    if (generating) throw new AppError(409, 'Another document is being generated. Wait for it to finish.')
+    // Read once so both drafts retain the same saved source, even across tab edits.
+    generating = true
+    try {
+      const result = cleanResumeOutputSchema.safeParse(await clean(input, base.text))
+      if (!result.success) throw new AppError(502, invalidCleanResumeMessage)
+      const shared = {
+        baseId: base.id, baseText: base.text, role: 'Clean base resume',
+        company: base.filename.replace(/\.pdf$/i, '').trim().slice(0, 150) || 'Base resume',
+        jobDescription: '', documentType: 'resume' as const, cleanBase: true,
+        generationId: randomUUID(), provider: input.provider, model: input.model,
+        summary: 'Cleaned formatting and wording from the saved base resume, without job tailoring. Compare both languages against the base snapshot and check every fact before use.',
+        keywords: [], gaps: [],
+      }
+      const versions = store.addVersions([
+        { ...shared, language: translationLanguages.en, text: result.data.englishText },
+        { ...shared, language: translationLanguages['zh-Hans'], text: result.data.chineseText },
+      ])
+      awardMembershipPoints(store.db, res.locals.user.id as string, versions.length)
+      res.status(201).json({ versions })
+    } finally { generating = false }
+  })
   app.post('/api/translations', async (req, res) => {
     const store = res.locals.store as ReturnType<Store['forUser']>
     const input = translationSchema.parse(req.body)
@@ -148,7 +338,7 @@ export function createApp(store: Store, generate: typeof generateResume = genera
       const result = translationOutputSchema.safeParse(await translate(input, sourceText, documentType))
       if (!result.success) throw new AppError(502, 'The model returned an incomplete or invalid translation. Nothing was saved. Try again or choose another model.')
       const language = translationLanguages[input.targetLanguage]
-      res.status(201).json(store.addVersion({
+      const created = store.addVersion({
         baseId: sourceVersion ? sourceVersion.baseId : sourceBase!.id,
         baseText: sourceVersion ? sourceVersion.baseText : sourceText,
         role: sourceVersion ? sourceVersion.role : 'Base resume',
@@ -159,7 +349,9 @@ export function createApp(store: Store, generate: typeof generateResume = genera
         summary: `Translated the saved document into ${language.name}. This is a translation, not new job tailoring. Review completeness and accuracy against the translation source before use.`,
         keywords: [], gaps: [], provider: input.provider, model: input.model,
         translation: { sourceType: input.sourceType, sourceId: input.sourceId, sourceText },
-      }))
+      })
+      awardMembershipPoints(store.db, res.locals.user.id as string)
+      res.status(201).json(created)
     } finally { generating = false }
   })
   app.post('/api/versions', async (req, res) => {
@@ -188,6 +380,7 @@ export function createApp(store: Store, generate: typeof generateResume = genera
           summary: english.summary, keywords: english.keywords, gaps: english.gaps })
       }
       const [version, ...additionalVersions] = store.addVersions(drafts)
+      awardMembershipPoints(store.db, res.locals.user.id as string, drafts.length)
       res.status(201).json(additionalVersions.length ? { ...version, additionalVersions } : version)
     } finally { generating = false }
   })
@@ -199,6 +392,7 @@ export function createApp(store: Store, generate: typeof generateResume = genera
     }).parse(req.body)
     const version = store.updateVersion(String(req.params.id), patch)
     if (!version) throw new AppError(404, 'Resume version not found.')
+    awardMembershipPoints(store.db, res.locals.user.id as string)
     res.json(version)
   })
   app.delete('/api/versions/:id', (req, res) => {
@@ -219,7 +413,7 @@ export function createApp(store: Store, generate: typeof generateResume = genera
   app.use('/api', (_req, res) => res.status(404).json({ error: 'Endpoint not found.' }))
   const errors: ErrorRequestHandler = (error, _req, res, _next) => {
     if (error instanceof z.ZodError) { res.status(400).json({ error: error.issues[0]?.message || 'Invalid input.' }); return }
-    if (error instanceof multer.MulterError) { res.status(400).json({ error: 'Upload one PDF file, up to 10 MB.' }); return }
+    if (error instanceof multer.MulterError) { res.status(400).json({ error: _req.path === '/api/job-description/extract' ? 'Upload one PDF or UTF-8 text file, up to 10 MB.' : 'Upload one PDF file, up to 10 MB.' }); return }
     if (error instanceof AppError) { res.status(error.status).json({ error: error.message }); return }
     if (error.type === 'entity.too.large') { res.status(413).json({ error: 'Request is too large.' }); return }
     if (error instanceof SyntaxError) { res.status(400).json({ error: 'Invalid JSON request.' }); return }

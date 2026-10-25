@@ -2,18 +2,18 @@
 
 One base resume. A thoughtful version for every opportunity.
 
-Folio imports a PDF resume and uses Ollama or OpenAI to create separate, editable resumes and cover letters for each job description, or explicitly translate a saved document into Simplified Chinese or English. Original PDFs, extracted text, job descriptions, source snapshots, and generated documents are stored in SQLite on your computer.
+Folio imports a PDF resume and uses local LM Studio, Ollama or OpenAI to create separate, editable resumes and cover letters for each job description, clean a bilingual base resume, or explicitly translate a saved document into Simplified Chinese or English. Original PDFs, extracted text, job descriptions, source snapshots, and generated documents are stored in SQLite on your computer.
 
 ## Start here
 
-This workspace is installed and configured for the existing local Ollama model **gemma4:latest**. The development server is available at **http://127.0.0.1:5173** while its VS Code task is running.
+This workspace is configured for local **LM Studio**, model **google/gemma-4-e4b**, at **http://127.0.0.1:1234**. The production app is available at **http://127.0.0.1:3001** while its VS Code task is running.
 
 First **create a local account** or **log in**. For the first account only, open the [local setup-code file](data/account-setup-code) on this computer and enter its contents into Folio's **Setup code** field. Never paste that code into chat, issues, logs, or screenshots. See **Local accounts** below before claiming an existing workspace.
 
 1. Upload a **text-based PDF**, up to 10 MB.
 2. Review the extracted text in **Base resume**. Correct formatting or reading-order issues if needed.
 3. Open **AI settings** and choose your provider and model.
-4. Select **New version**, enter the job title and company, and paste the job description.
+4. Select **New version**, enter the job title and company, and paste the job description or choose **Upload JD document** (PDF or UTF-8 TXT). Review and edit the extracted text before generating.
 5. The AI automatically matches the JD's language. An English JD creates one English resume; a non-English JD creates a matching-language resume **and an English version**. Review each draft, highlighted keywords, and unsupported requirements. Compare against the **Base snapshot** and **Job description** tabs.
 6. Edit the resume, save changes, and mark it **Draft**, **Ready**, or **Applied**.
 7. Select **Export PDF** to download the saved version.
@@ -86,7 +86,16 @@ Cover letters use the same base resume, provider, privacy controls, and automati
 
 The shared **Resume versions** library shows **Cover letter** badges and supports **Filter by document type** alongside search and status filters. Older documents without type metadata are treated as resumes. Exports include the type and language, for example **Example Labs - Frontend Engineer - cover-letter - en.pdf**. Generated letters aim to be concise, but long user edits can span multiple PDF pages; a one-page export is not guaranteed.
 
-Only a downloaded local Ollama model provides offline processing. OpenAI requires explicit consent for each generation; switching document type clears that consent, and it is never persisted. The base resume and JD are sent only after confirmation, just as for resume generation.
+Downloaded local LM Studio and Ollama models provide offline processing. OpenAI requires explicit consent for each generation; switching document type clears that consent, and it is never persisted. The base resume and JD are sent only after confirmation, just as for resume generation.
+
+### Clean English and Chinese base resumes
+
+In **Base resume**, save any extracted-text edits, then select **Create clean English + Chinese** → **Generate both versions**. No job description is required. The selected AI provider cleans extraction artifacts, formatting, grammar and wording into complete **English** and **Simplified Chinese** resumes, instructed to preserve all substantive facts rather than invent qualifications or tailor to a role.
+
+- Both language drafts are validated and saved together; incomplete output saves neither. Each keeps the exact saved base snapshot and is independently editable using **Edit resume** → **Save changes**. Use **Language version** to switch between them, and **Export PDF** for each saved language.
+- Reopen drafts from **Clean base resumes** on the Base resume page or from **Resume versions** (marked **Clean base**). Generating again creates another pair and never overwrites earlier manual edits. Replacing the PDF shows drafts for the new active base; older drafts remain in Resume versions.
+- Your original PDF and extracted text are not overwritten. Future job tailoring and the career chart still use the saved extracted text, not these separate cleaned drafts. Compare each result against **Base snapshot**; AI cleanup and translation may introduce errors.
+- LM Studio and downloaded Ollama models process locally. OpenAI requires explicit consent for this cleanup request and sends only the saved base text, not the PDF. Browser API keys and consent remain memory-only. Closing is disabled while generating; failures can be retried. After a connection loss, reload to check for saved drafts before retrying.
 
 ### Translate a saved document
 
@@ -96,8 +105,14 @@ In **Base resume**, or an open saved resume or cover letter, select **Translate 
 - Each request saves **one separate editable Draft**. Originals, the base text, and the uploaded PDF are never overwritten. Repeating a translation, even into the same language, creates an independent document, not a linked bilingual generation pair. Saved resumes remain resumes and cover letters remain cover letters; existing role, company, JD, and original base snapshot are retained. Base-derived translations have no JD.
 - Results display a **Translation** badge and **Translated, not tailored.** notes instead of tailoring keywords/gaps. **Translation source** shows the exact saved text translated. **Base snapshot** is the original base text retained with the document and may differ from that translation source. Both snapshots remain unchanged when the source is edited or deleted.
 - Review meaning, names, dates, and facts against **Translation source**. Use the regular **Edit resume** / **Edit cover letter**, **Save changes**, status, and **Export PDF** controls. Editing or deleting a result affects only that result. PDF filenames retain type/language suffixes; a base translation exports as **alex-example - Base resume - zh-Hans.pdf** for a base named **alex-example.pdf**.
-- Translation uses the same provider/model settings. Only a downloaded local Ollama model provides offline processing. OpenAI requires **I agree to send this document text to OpenAI for this translation.** for each request. Changing the target or key clears consent. A key is required unless a server key is configured; browser keys remain memory-only and are cleared on reload. The browser sends source identity and translation settings to the local server; the server sends only the selected saved document text as provider input, not a separate JD, base snapshot, or PDF binary.
+- Translation uses the same provider/model settings. Downloaded local LM Studio and Ollama models provide offline processing. OpenAI requires **I agree to send this document text to OpenAI for this translation.** for each request. Changing the target or key clears consent. An OpenAI key is required unless a server key is configured; browser keys remain memory-only and are cleared on reload. The browser sends source identity and translation settings to the local server; the server sends only the selected saved document text as provider input, not a separate JD, base snapshot, or PDF binary.
 - Translation PDFs use the same installed Unicode/CJK fonts, glyph-coverage checks, and actionable font errors described below. No fonts are downloaded automatically. Review the exported layout as well as the text. On an error, check settings/connection and use **Retry translation**; after a connection loss, reload the library first to check whether the request already saved a draft.
+
+### Upload a job description
+
+In **New version** or **New cover letter**, choose **Upload JD document** to import a text-based PDF or UTF-8 TXT file. Limits are 10 MB, 30 PDF pages, and 30,000 characters. Scanned PDFs need OCR first; Word documents should be exported to PDF or plain text. Extraction runs locally without an AI provider. The uploaded file is not saved; only the reviewed job-description text is saved with a generated document and sent to your selected provider when you generate (OpenAI still requires consent).
+
+The text remains editable. Replacing a nonempty description requires confirmation, and failed uploads preserve the current draft. Add at least 80 characters before generating. Uploading or editing a JD clears OpenAI consent. Generation and closing are disabled while extraction is in progress.
 
 ### Automatic language matching
 
@@ -112,7 +127,7 @@ In **Base resume**, or an open saved resume or cover letter, select **Translate 
 
 - **Node.js 24+** and npm. SQLite uses Node's built-in `node:sqlite`; its experimental warning on Node 24 is expected.
 - A modern browser supporting native dialogs.
-- Either a running local Ollama model, or an OpenAI API key with access to a Chat Completions model supporting JSON mode.
+- Either a running local LM Studio or Ollama model supporting structured JSON output, or an OpenAI API key with access to a Chat Completions model supporting JSON mode.
 
 Run these npm scripts from the project root:
 
@@ -156,9 +171,17 @@ Only the generated query (at most 400 characters) is sent to the search provider
 
 Conversations and drafts live only in tab memory: **New chat**, leaving the chat page, reloading, or signing out clears them. Leaving with content asks for confirmation. Folio does not store or log chats; LM Studio and the search provider may have their own logging. The last five complete turns are sent as context, with a 4,000-character composer limit and a 2,048-token answer budget. Query extraction uses schema-constrained JSON and a 512-token budget; choose a chat model supporting LM Studio structured output. Responses are displayed as plain text (no active model-supplied HTML). **Stop** cancels the pending request and keeps the draft; cancellation cannot retract an already-sent search or guarantee that LM Studio immediately releases computation. Query extraction times out after 30 seconds, search after 20 seconds, and final answer generation after three minutes (separate sequential stages). At most two chats run concurrently, with 30 chat API requests/minute. Account/session and stale-tab protections apply to all chat endpoints.
 
-### Ollama — local processing
+### LM Studio — local resume processing
 
-Ollama is the default. In this workspace, [.env](.env) selects the already-installed **gemma4:latest** model, which passed a real smoke test using fictional resume content.
+This installation selects **LM Studio → google/gemma-4-e4b** for resume generation, cover letters, English/Chinese base cleanup and translation. Load that model in LM Studio and start its server at **http://127.0.0.1:1234**. In **AI settings**, select **LM Studio** and use **Check connection** to verify the advertised models. Select a chat/instruct model, not an embedding model.
+
+Folio uses the local OpenAI-compatible **/v1/chat/completions** endpoint with schema-constrained JSON. This is **not OpenAI cloud processing**: no cloud consent or OpenAI key is required, and there is no cloud fallback. The address is fixed to loopback. An optional `LMSTUDIO_API_KEY` is used only if your LM Studio server requires authentication. Both local services must stay running.
+
+The installation sets `FOLIO_AI_PROVIDER=lmstudio` and `LMSTUDIO_MODEL=google/gemma-4-e4b`. On reload, legacy preferences adopt the local default, and preferences still using the previous default **google/gemma-4-12b** switch to E4B. Custom models remain unchanged. The last installation default is recorded per account so a later explicit selection of an older model is respected. Existing documents retain their original provider attribution.
+
+### Ollama — alternative local processing
+
+Ollama remains available in **AI settings**. In this workspace, [.env](.env) retains the already-installed **gemma4:latest** model as the Ollama choice; LM Studio is now the selected default.
 
 On another machine, install and start Ollama, download a suitable model (for example, `ollama pull llama3.2`), and set its exact installed name in **AI settings**. Without configuration, the app defaults to `llama3.2`.
 
@@ -176,10 +199,12 @@ Explicit document translation instead requires separate per-translation consent 
 
 ### Environment options
 
-See [.env.example](.env.example) for portable defaults. Restart the server after changing environment variables.
+Configure these options in your private environment file. Restart the server after changing environment variables.
 
 | Variable | Default / use |
 | --- | --- |
+| `FOLIO_AI_PROVIDER` | `ollama` if unset; this installation uses `lmstudio` |
+| `LMSTUDIO_MODEL` | `google/gemma-4-e4b`; local resume/cleanup/translation model |
 | `OLLAMA_MODEL` | `llama3.2`; current workspace override: `gemma4:latest` |
 | `OLLAMA_URL` | `http://127.0.0.1:11434`; loopback only |
 | `OPENAI_MODEL` | `gpt-4o-mini` |
@@ -190,7 +215,7 @@ See [.env.example](.env.example) for portable defaults. Restart the server after
 | `PDF_FONT_PATH` | Optional path to a Unicode TTF/OTF/TTC outline font covering all resume characters |
 | `PDF_FONT_NAME` | Optional PostScript face name when using a font collection with `PDF_FONT_PATH` |
 
-Saved UI model preferences take precedence over default model names from the environment. Use **AI settings** to change an existing preference.
+Saved custom UI model preferences take precedence over default model names from the environment. LM Studio preferences still using the previous installation default follow a changed default on reload. Use **AI settings** to select a different model explicitly.
 
 ## Storage, privacy, and backup
 
@@ -209,7 +234,7 @@ Saved UI model preferences take precedence over default model names from the env
 - **Scanned PDFs need OCR first.** This app extracts selectable text; it does not run OCR. Password-protected or damaged PDFs may fail. Limits: 10 MB, 30 pages, and 50,000 extracted characters. Job descriptions: 80–30,000 characters.
 - **PDF layouts are not preserved.** Multi-column source PDFs may extract in an unexpected order. Review and correct the base text before tailoring. Export uses a clean, single-column layout rather than reproducing the uploaded template. Preview and export pagination may differ.
 - **Non-Latin text:** export checks glyph coverage and tries installed Unicode/CJK system fonts as needed, including TTC collections. It refuses unsupported text with an actionable error rather than silently dropping characters. If needed, configure `PDF_FONT_PATH` (and optional `PDF_FONT_NAME`) and restart. One outline font must cover the full resume. Complex-script shaping, right-to-left PDF layout, and emoji have limitations; inspect exported PDFs visually. The browser preview/editor supports language metadata and common right-to-left languages.
-- **Cannot reach Ollama / model not found:** start Ollama and verify the exact model name with `ollama list`. Choose an installed model in AI settings. The app never downloads a model automatically.
+- **Cannot reach Ollama / model not found:** open the Ollama application (or run `ollama serve`), then open **AI settings → Check connection**. Choose a model from **Installed Ollama models** and save settings. On this computer the installed model is **gemma4:latest**; older account preferences may still select **llama3.2**. Keep Ollama running while generating. The app never downloads a model automatically or silently switches to a cloud provider.
 - **Slow generation or translation:** the request timeout is 3 minutes; generation and translation share a one-request-at-a-time limit. Keep the active dialog open. Try a smaller model or shorter input if needed. Very long inputs can exceed a model's effective context; prefer a concise base resume and focused JD.
 - **AI output needs review.** Prompts prohibit invented facts and distinguish unsupported requirements, but there is no automated guarantee of factual accuracy or ATS performance. Never add an unearned qualification just to satisfy a JD. Tailoring notes describe the initial generated draft and do not refresh after manual edits.
 - **Failed generation:** invalid output or provider errors do not save a version. A connection loss after generation completes can leave a successfully saved version; reload the library before retrying.

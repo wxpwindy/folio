@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { lmStudioUrl, lmStudioHeaders, lmStudioOutputSchema } from './lmstudio.ts'
 
 export class AppError extends Error {
   constructor(public status: number, message: string) { super(message) }
@@ -9,7 +10,7 @@ export const generationSchema = z.object({
   role: z.string().trim().min(1).max(150),
   company: z.string().trim().min(1).max(150),
   jobDescription: z.string().trim().min(80, 'Add at least 80 characters of the job description.').max(30000),
-  provider: z.enum(['ollama', 'openai']),
+  provider: z.enum(['ollama', 'openai', 'lmstudio']),
   model: z.string().trim().min(1).max(100),
   apiKey: z.string().max(500).optional(),
   cloudConsent: z.boolean().optional(),
@@ -22,13 +23,14 @@ const resumeSchema = z.object({
   keywords: z.array(z.string().max(200)).max(50),
   gaps: z.array(z.string().max(1000)).max(30),
 })
-export const outputSchema = resumeSchema.extend({
+const providerOutputSchema = resumeSchema.extend({
   language: z.object({
     code: z.string().trim().regex(/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/),
     name: z.string().trim().min(1).max(80),
   }),
   englishVersion: resumeSchema.nullable(),
-}).superRefine((result, context) => {
+})
+export const outputSchema = providerOutputSchema.superRefine((result, context) => {
   const english = result.language.code.split('-')[0] === 'en'
   if (english !== (result.englishVersion === null)) {
     context.addIssue({ code: 'custom', message: 'Non-English jobs require an English version; English jobs must not duplicate it.' })
@@ -88,7 +90,17 @@ export async function generateResume(input: GenerationInput, baseText: string): 
   const result = await requestModel(input, messages, ollamaOutputFormat, {
     consentMessage: 'Confirm that this resume and job description can be sent to OpenAI.', invalidMessage,
   })
-  const parsed = outputSchema.safeParse(result)
+  const candidate = providerOutputSchema.safeParse(result)
+  if (!candidate.success) throw new AppError(502, invalidMessage)
+  // Some local models duplicate an English draft instead of returning null.
+  // Discard only an exact validated copy; never choose between differing drafts
+  // or relax the requirement for a complete non-English/English pair.
+  const draft = candidate.data
+  if (draft.language.code.split('-')[0] === 'en' && draft.englishVersion
+    && JSON.stringify(resumeSchema.parse(draft)) === JSON.stringify(draft.englishVersion)) {
+    draft.englishVersion = null
+  }
+  const parsed = outputSchema.safeParse(draft)
   if (!parsed.success) throw new AppError(502, invalidMessage)
   return parsed.data
 }
@@ -114,6 +126,14 @@ export async function requestModel(
         body: JSON.stringify({ model: input.model, messages, response_format: { type: 'json_object' } }),
         signal: AbortSignal.timeout(180000),
       })
+    } else if (input.provider === 'lmstudio') {
+      response = await fetch(`${lmStudioUrl}/chat/completions`, {
+        method: 'POST', redirect: 'error', headers: lmStudioHeaders(),
+        body: JSON.stringify({ model: input.model, messages, stream: false, temperature: 0.2,
+          response_format: { type: 'json_schema', json_schema: { name: 'folio_document', strict: true, schema: lmStudioOutputSchema(format) } },
+        }),
+        signal: AbortSignal.timeout(180000),
+      })
     } else {
       const url = new URL(process.env.OLLAMA_URL || 'http://127.0.0.1:11434')
       if (!['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname) || !['http:', 'https:'].includes(url.protocol)) {
@@ -131,18 +151,19 @@ export async function requestModel(
       throw new AppError(504, 'Generation timed out after 3 minutes. Try a smaller model or shorter source text.')
     }
     throw new AppError(502, input.provider === 'ollama'
-      ? 'Cannot reach Ollama. Start Ollama locally and download the model shown in AI settings.'
+      ? 'Cannot reach Ollama. Open the Ollama app or run ollama serve locally. Then use Check connection in AI settings and select an installed model.'
+      : input.provider === 'lmstudio' ? 'Cannot reach LM Studio. Load your selected model and start the local server at http://127.0.0.1:1234. Then check the connection in AI settings.'
       : 'Cannot reach OpenAI. Check your internet connection and try again.')
   }
   if (!response.ok) {
-    if (response.status === 401) throw new AppError(401, 'The AI provider rejected your API key. Check AI settings.')
+    if (response.status === 401) throw new AppError(401, input.provider === 'lmstudio' ? 'LM Studio requires a valid server token. Check LMSTUDIO_API_KEY on the Folio server.' : 'The AI provider rejected your API key. Check AI settings.')
     if (response.status === 429) throw new AppError(429, 'The AI provider rate limit or quota was reached. Check your account or try later.')
-    if (response.status === 404) throw new AppError(400, 'Model not found. Check the model name and download it in Ollama if needed.')
+    if (response.status === 404) throw new AppError(400, input.provider === 'lmstudio' ? 'LM Studio model not found. Load the selected model and check its identifier in AI settings.' : 'Model not found. Check the model name and download it in Ollama if needed.')
     throw new AppError(502, `The AI provider returned an error (${response.status}). Check the model configuration.`)
   }
   try {
     const data = await response.json()
-    const content = input.provider === 'openai' ? data.choices?.[0]?.message?.content : data.message?.content
+    const content = input.provider === 'ollama' ? data.message?.content : data.choices?.[0]?.message?.content
     return JSON.parse(content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''))
   } catch {
     throw new AppError(502, errors.invalidMessage)

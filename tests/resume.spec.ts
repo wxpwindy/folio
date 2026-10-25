@@ -29,7 +29,7 @@ async function expectCoverLetterLayout(page: Page) {
   const overflow = await page.locator('main, .header-actions, .filter-bar, .version-card, dialog[open] .modal-body, dialog[open] .tabs, dialog[open] .modal-footer, dialog[open] .resume-editor, dialog[open] .language-toolbar').evaluateAll(elements =>
     elements.filter(element => element.scrollWidth > element.clientWidth + 1).map(element => element.className))
   expect(overflow).toEqual([])
-  for (const control of await page.locator('dialog[open] input, dialog[open] select, dialog[open] textarea, .filter-bar select').all()) {
+  for (const control of await page.locator('dialog[open] input:visible, dialog[open] select:visible, dialog[open] textarea:visible, .filter-bar select:visible').all()) {
     const bounds = await control.boundingBox()
     expect(bounds).not.toBeNull()
     expect(bounds!.x).toBeGreaterThanOrEqual(0)
@@ -436,7 +436,7 @@ test('AI settings persist preferences but keep API keys in memory only', async (
   const storage = await page.evaluate(() => ({ local: { ...localStorage }, session: { ...sessionStorage } }))
   expect(JSON.stringify(storage)).not.toContain(fakeKey)
   expect(storage.local).not.toHaveProperty('folio-ai-settings')
-  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-custom-model' })
+  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-custom-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b' })
   expect(JSON.stringify(await context.cookies())).not.toContain(fakeKey)
   const workspace = await (await request.get('/api/workspace')).json()
   expect(workspace.config.openaiConfigured).toBe(false)
@@ -759,7 +759,7 @@ test('cover letter OpenAI consent is explicit, resets on either type switch and 
   await form.getByRole('button', { name: 'Close dialog' }).click()
   const storage = await page.evaluate(() => ({ local: { ...localStorage }, session: { ...sessionStorage } }))
   expect(storage.local).not.toHaveProperty('folio-ai-settings')
-  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-cloud-model' })
+  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-cloud-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b' })
   for (const data of [storage, await context.cookies(), await (await request.get('/api/workspace')).json()]) {
     expect(JSON.stringify(data)).not.toMatch(/cloudConsent|"consent"/i)
     expect(JSON.stringify(data)).not.toContain(fakeKey)

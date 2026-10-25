@@ -57,8 +57,8 @@ const invalidLanguageOutputs: [string, unknown][] = [
   ['blank language name', { ...result, language: { code: 'en', name: '  ' } }],
   ['overlong language name', { ...result, language: { code: 'en', name: 'x'.repeat(81) } }],
   ['missing English field for English', { ...result, englishVersion: undefined }],
-  ['duplicate English version', { ...result, englishVersion }],
-  ['duplicate regional English version', { ...result, language: { code: 'en-GB', name: 'English (UK)' }, englishVersion }],
+  ['differing duplicate English version', { ...result, englishVersion: { ...englishVersion, summary: 'Different notes' } }],
+  ['differing duplicate regional English version', { ...result, language: { code: 'en-GB', name: 'English (UK)' }, englishVersion: { ...englishVersion, resumeText: `${baseText}\nDifferent content` } }],
   ...['', 'e', 'english', 'EN', 'en_US', 'fr-', 'fr--CA', 'zh-Hans-!', 'en-123456789', 'en\r\nX-Test: injected'].map(code =>
     [`malformed language code ${JSON.stringify(code)}`, { ...result, language: { code, name: 'Test' } }] as [string, unknown]),
   ...[
@@ -119,6 +119,20 @@ describe('AI provider adapter (mocked network only)', { concurrency: false }, ()
       else process.env[name] = originalEnv[name]
     }
   })
+
+  for (const provider of ['ollama', 'openai'] as const) {
+    it(`${provider}: discards only an exact redundant English copy`, async () => {
+      for (const code of ['en', 'en-GB']) {
+        fetchMock.mock.mockImplementation(async () => providerResponse(provider, JSON.stringify({ ...result, language: { code, name: 'English' }, englishVersion })))
+        const actual = await generateResume({ ...input, provider, apiKey: 'fictional-test-key', cloudConsent: true }, baseText)
+        assert.deepEqual(actual, { ...result, language: { code, name: 'English' } })
+      }
+      for (const patch of [{ resumeText: `${baseText}\nDifferent` }, { summary: 'Different' }, { keywords: ['Different'] }, { gaps: ['Different'] }]) {
+        fetchMock.mock.mockImplementation(async () => providerResponse(provider, JSON.stringify({ ...result, englishVersion: { ...englishVersion, ...patch } })))
+        await assert.rejects(generateResume({ ...input, provider, apiKey: 'fictional-test-key', cloudConsent: true }, baseText), appError(502, /invalid resume/))
+      }
+    })
+  }
 
   function capturedRequest() {
     assert.equal(fetchMock.mock.callCount(), 1)

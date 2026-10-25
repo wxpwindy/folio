@@ -334,7 +334,7 @@ test('OpenAI translation requires fresh consent, resets on target and key change
     expect(JSON.stringify(data)).not.toMatch(/cloudConsent|"consent"/i)
   }
   expect(storage.local).not.toHaveProperty('folio-ai-settings')
-  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-cloud-model' })
+  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-cloud-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b' })
   await page.reload()
   await page.locator('.version-card').filter({ has: page.locator('.translation-badge') }).click()
   await openTranslation(page, detail)

@@ -96,7 +96,7 @@ describe('local administrator permissions and lifecycle', { concurrency: false }
     const administrator = await admin(), owner = await user()
     const base = store.forUser(owner.id).addBase({ text, filename: 'private.pdf', pages: 1 }, Buffer.from('%PDF-private'))
     const listed = await administrator.session.get('/api/admin/users').expect(200)
-    for (const account of listed.body.users) assert.deepEqual(Object.keys(account).sort(), ['createdAt', 'disabled', 'id', 'identifier', 'method', 'mustChangePassword', 'role'])
+    for (const account of listed.body.users) assert.deepEqual(Object.keys(account).sort(), ['createdAt', 'disabled', 'id', 'identifier', 'membershipEnrolled', 'membershipPoints', 'membershipTier', 'method', 'mustChangePassword', 'role'])
     const serialized = JSON.stringify(listed.body)
     for (const secret of [text, password, userPassword, code, 'password_hash']) assert.ok(!serialized.includes(secret))
     await administrator.session.get(`/api/base/${base.id}/pdf`).expect(404)

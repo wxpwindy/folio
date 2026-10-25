@@ -201,6 +201,8 @@ describe('local resume API and in-memory persistence', { concurrency: false }, (
         openaiConfigured: Boolean(process.env.OPENAI_API_KEY),
         ollamaModel: process.env.OLLAMA_MODEL || 'llama3.2',
         openaiModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        lmstudioModel: process.env.LMSTUDIO_MODEL || 'google/gemma-4-e4b',
+        defaultProvider: process.env.FOLIO_AI_PROVIDER === 'lmstudio' ? 'lmstudio' : 'ollama',
       },
     })
     assert.equal(response.headers['x-powered-by'], undefined)

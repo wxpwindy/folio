@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect } from 'react'
 import type { CSSProperties, FormEvent } from 'react'
 import { LoaderCircle, ShieldCheck } from 'lucide-react'
-import { errorMessage, getFeatures, request, setFeature } from './api'
-import type { AuthSession, AuthUser, Action, ManagedUser, SetupStatus, FeatureState } from './types'
+import { date, errorMessage, getFeatures, getLoyaltyEvents, getLoyaltySettings, request, setFeature, updateLoyaltySettings, updateUserLoyalty } from './api'
+import type { AuthSession, AuthUser, Action, LoyaltyAuditEvent, LoyaltySettings, ManagedUser, SetupStatus, FeatureState } from './types'
 import { Pipeline } from './Pipeline'
 
   export function Administration({ user, onClose }: { user: AuthUser; onClose: () => void }) {
@@ -10,6 +10,10 @@ import { Pipeline } from './Pipeline'
     const [setup, setSetup] = useState<SetupStatus | null>(null)
     const [features, setFeatures] = useState<FeatureState | null>(null)
     const [query, setQuery] = useState('')
+    const [membershipDraft, setMembershipDraft] = useState<LoyaltySettings | null>(null)
+    const [tierDrafts, setTierDrafts] = useState<Record<string, 1 | 2 | 3 | 4>>({})
+    const [enrolledDrafts, setEnrolledDrafts] = useState<Record<string, boolean>>({})
+    const [loyaltyEvents, setLoyaltyEvents] = useState<LoyaltyAuditEvent[]>([])
     const [error, setError] = useState('')
     const [notice, setNotice] = useState('')
     const [busy, setBusy] = useState(false)
@@ -60,14 +64,20 @@ import { Pipeline } from './Pipeline'
     }
 
     async function refresh() {
-        const [accounts, status, featureState] = await Promise.all([
+        const [accounts, status, featureState, membershipSettings, events] = await Promise.all([
           request<{ users: ManagedUser[] }>('/admin/users'),
           request<SetupStatus>('/admin/setup'),
-          getFeatures()
+          getFeatures(),
+          getLoyaltySettings(),
+          getLoyaltyEvents(),
         ])
         setUsers(accounts.users)
+        setTierDrafts(Object.fromEntries(accounts.users.map(account => [account.id, account.membershipTier])))
+        setEnrolledDrafts(Object.fromEntries(accounts.users.map(account => [account.id, account.membershipEnrolled])))
         setSetup(status)
         setFeatures(featureState)
+        setMembershipDraft(membershipSettings)
+        setLoyaltyEvents(events)
     }
 
     useEffect(() => {
@@ -75,12 +85,18 @@ import { Pipeline } from './Pipeline'
       void Promise.all([
         request<{ users: ManagedUser[] }>('/admin/users'),
         request<SetupStatus>('/admin/setup'),
-        getFeatures()
-      ]).then(([accounts, status, featureState]) => {
+        getFeatures(),
+        getLoyaltySettings(),
+        getLoyaltyEvents(),
+      ]).then(([accounts, status, featureState, membershipSettings, events]) => {
         if (active) {
           setUsers(accounts.users)
+          setTierDrafts(Object.fromEntries(accounts.users.map(account => [account.id, account.membershipTier])))
+          setEnrolledDrafts(Object.fromEntries(accounts.users.map(account => [account.id, account.membershipEnrolled])))
           setSetup(status)
           setFeatures(featureState)
+          setMembershipDraft(membershipSettings)
+          setLoyaltyEvents(events)
         }
       }).catch(e => {
         if (active) setError(errorMessage(e))
@@ -140,6 +156,7 @@ import { Pipeline } from './Pipeline'
               <article className="admin-user" key={account.id} aria-label={account.identifier}>
                 <h3>{account.identifier}{account.id === user.id && ' (you)'}</h3>
                 <p>{account.method} · {account.role} · {account.disabled ? 'Disabled' : 'Enabled'}{account.mustChangePassword && ' · Password change required'}</p>
+                <p>Membership: {enrolledDrafts[account.id] ?? account.membershipEnrolled ? 'Enrolled' : 'Not enrolled'} · Tier {(tierDrafts[account.id] ?? account.membershipTier)} · Points {account.membershipPoints}</p>
                 <p className="admin-id">ID: {account.id}</p>
                 {account.id !== user.id ? (
                   <fieldset disabled={busy}>
@@ -162,6 +179,23 @@ import { Pipeline } from './Pipeline'
                       }}>
                         Reset password
                       </button>
+                    </div>
+                    <div className="admin-actions">
+                      <label>Membership tier
+                        <select value={tierDrafts[account.id] ?? account.membershipTier} onChange={event => setTierDrafts(old => ({ ...old, [account.id]: Number(event.target.value) as 1 | 2 | 3 | 4 }))}>
+                          <option value={1}>Tier 1</option>
+                          <option value={2}>Tier 2</option>
+                          <option value={3}>Tier 3</option>
+                          <option value={4}>Tier 4</option>
+                        </select>
+                      </label>
+                      <label>
+                        <input type="checkbox" checked={enrolledDrafts[account.id] ?? account.membershipEnrolled} onChange={event => setEnrolledDrafts(old => ({ ...old, [account.id]: event.target.checked }))} /> Enrolled
+                      </label>
+                      <button className="button secondary small" onClick={() => void perform(async () => {
+                        await updateUserLoyalty(account.id, { tier: tierDrafts[account.id] ?? account.membershipTier, enrolled: enrolledDrafts[account.id] ?? account.membershipEnrolled })
+                        setNotice('User membership updated.')
+                      })}>Save membership</button>
                     </div>
                     {resetId === account.id && (
                       <form className="admin-reset" onSubmit={async e => {
@@ -256,6 +290,59 @@ import { Pipeline } from './Pipeline'
             </div>
           </section>
         )}
+        <section className="admin-section" aria-labelledby="loyalty-title">
+          <div className="admin-heading">
+            <h2 id="loyalty-title">Membership and loyalty</h2>
+          </div>
+          {membershipDraft && <form className="admin-reset" onSubmit={async event => {
+            event.preventDefault()
+            await perform(async () => {
+              const saved = await updateLoyaltySettings(membershipDraft)
+              setMembershipDraft(saved)
+              setNotice('Membership settings saved.')
+            })
+          }}>
+            <label>Base points per resume create/save
+              <input type="number" min={0} max={10000} value={membershipDraft.basePoints}
+                onChange={event => setMembershipDraft({ ...membershipDraft, basePoints: Math.max(0, Number(event.target.value) || 0) })} />
+            </label>
+            <label>Tier 1 factor
+              <input type="number" step="0.1" min={0} max={10} value={membershipDraft.factors[1]}
+                onChange={event => setMembershipDraft({ ...membershipDraft, factors: { ...membershipDraft.factors, 1: Math.max(0, Number(event.target.value) || 0) } })} />
+            </label>
+            <label>Tier 2 factor
+              <input type="number" step="0.1" min={0} max={10} value={membershipDraft.factors[2]}
+                onChange={event => setMembershipDraft({ ...membershipDraft, factors: { ...membershipDraft.factors, 2: Math.max(0, Number(event.target.value) || 0) } })} />
+            </label>
+            <label>Tier 3 factor
+              <input type="number" step="0.1" min={0} max={10} value={membershipDraft.factors[3]}
+                onChange={event => setMembershipDraft({ ...membershipDraft, factors: { ...membershipDraft.factors, 3: Math.max(0, Number(event.target.value) || 0) } })} />
+            </label>
+            <label>Tier 4 factor
+              <input type="number" step="0.1" min={0} max={10} value={membershipDraft.factors[4]}
+                onChange={event => setMembershipDraft({ ...membershipDraft, factors: { ...membershipDraft.factors, 4: Math.max(0, Number(event.target.value) || 0) } })} />
+            </label>
+            <div className="admin-actions"><button className="button primary small" type="submit" disabled={busy || loading}>Save membership settings</button></div>
+          </form>}
+          <p>Each resume create/save event awards: base points × user's tier factor. Tier factors and base points are global.</p>
+        </section>
+        <section className="admin-section" aria-labelledby="loyalty-events-title">
+          <div className="admin-heading">
+            <h2 id="loyalty-events-title">Loyalty activity log</h2>
+            <button className="button secondary small" disabled={busy || loading} onClick={() => void perform(async () => {})}>Refresh log</button>
+          </div>
+          {loyaltyEvents.length === 0 ? <p>No loyalty changes logged yet.</p> : <ul className="admin-audit-log" aria-label="Loyalty activity log entries">
+            {loyaltyEvents.map(event => {
+              const details = event.eventType === 'settings_updated'
+                ? `Updated settings: base points ${event.payload.basePoints ?? 'n/a'}, factors ${event.payload.factors ? `T1 ${event.payload.factors[1]}, T2 ${event.payload.factors[2]}, T3 ${event.payload.factors[3]}, T4 ${event.payload.factors[4]}` : 'n/a'}`
+                : `Updated membership${event.targetIdentifier ? ` for ${event.targetIdentifier}` : ''}: tier ${event.payload.tier ?? 'n/a'}${event.payload.enrolled === undefined ? '' : `, enrolled ${event.payload.enrolled ? 'yes' : 'no'}`}`
+              return <li key={event.id} className="admin-audit-item">
+                <p>{details}</p>
+                <span>{date(event.createdAt)} · by {event.actorIdentifier}</span>
+              </li>
+            })}
+          </ul>}
+        </section>
       </main>
     )
   }

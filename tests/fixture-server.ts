@@ -24,6 +24,8 @@ globalThis.fetch = async () => { throw new Error('Outbound fetch is forbidden in
 delete process.env.OPENAI_API_KEY
 process.env.OLLAMA_MODEL = 'e2e-local-model'
 process.env.OPENAI_MODEL = 'e2e-cloud-model'
+process.env.FOLIO_AI_PROVIDER = 'ollama'
+process.env.LMSTUDIO_MODEL = 'google/gemma-4-12b'
 const store = createStore(':memory:')
 // Fictional fixture contract, mirrored in helpers.ts. Never read DATA_DIR or the
 // real setup-code file. Hash once; ordinary tests do not consume the auth limiter.
@@ -89,7 +91,7 @@ const app = createApp(store, generate, translate, () => {
       { title: 'Second research source', url: 'https://example.com/research-two', snippet: 'Second ranked synthetic result.' },
       { title: 'Third research source', url: 'https://example.com/research-three', snippet: 'Third ranked synthetic result.' },
     ] : [] }),
-  }, chatRateLimitStore, authRateLimitStores, pipeline)
+  }, chatRateLimitStore, authRateLimitStores, pipeline, async (_input, baseText) => ({ englishText: baseText, chineseText: chineseTranslationText }))
 // These utilities exist ONLY on this isolated loopback/in-memory fixture. They
 // never disable or replace production auth, ownership checks, or rate limiting.
 app.use('/__test', (req, res, next) => {
@@ -115,7 +117,7 @@ app.post('/__test/reset', (req, res) => {
   const expiresAt = Date.now() + seconds * 1000
   store.db.exec('BEGIN IMMEDIATE')
   try {
-    store.db.exec('DELETE FROM versions; DELETE FROM bases; DELETE FROM sessions; DELETE FROM users; DELETE FROM account_setup; DELETE FROM features;')
+    store.db.exec('DELETE FROM loyalty_events; DELETE FROM versions; DELETE FROM bases; DELETE FROM sessions; DELETE FROM users; DELETE FROM account_setup; DELETE FROM features;')
     store.db.prepare('INSERT INTO account_setup (id, code_hash) VALUES (1, ?)').run(hashToken(setupCode))
     if (anonymous) {
       if (legacy) {

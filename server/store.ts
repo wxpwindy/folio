@@ -21,12 +21,13 @@ export interface ResumeVersion {
   summary: string
   keywords: string[]
   gaps: string[]
-  provider: 'ollama' | 'openai'
+  provider: 'ollama' | 'openai' | 'lmstudio'
   model: string
   // Optional for older saved versions; metadata is immutable after creation.
   documentType?: 'resume' | 'cover-letter'
   language?: { code: string; name: string }
   generationId?: string
+  cleanBase?: boolean
   translation?: { sourceType: 'base' | 'version'; sourceId: string; sourceText: string }
   status: 'draft' | 'ready' | 'applied'
   createdAt: string
@@ -60,6 +61,25 @@ export function createStore(filename: string) {
       key TEXT PRIMARY KEY CHECK(key IN ('webChat')),
       value INTEGER NOT NULL CHECK(value IN (0, 1)) DEFAULT 1
     );
+    CREATE TABLE IF NOT EXISTS membership_settings (
+      id INTEGER PRIMARY KEY CHECK(id = 1),
+      base_points INTEGER NOT NULL CHECK(base_points >= 0),
+      tier1_factor REAL NOT NULL CHECK(tier1_factor >= 0),
+      tier2_factor REAL NOT NULL CHECK(tier2_factor >= 0),
+      tier3_factor REAL NOT NULL CHECK(tier3_factor >= 0),
+      tier4_factor REAL NOT NULL CHECK(tier4_factor >= 0)
+    );
+    CREATE TABLE IF NOT EXISTS loyalty_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_type TEXT NOT NULL CHECK(event_type IN ('settings_updated', 'user_membership_updated')),
+      actor_user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      target_user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+      payload TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS loyalty_events_created_idx ON loyalty_events(created_at DESC, id DESC);
+    INSERT OR IGNORE INTO membership_settings(id, base_points, tier1_factor, tier2_factor, tier3_factor, tier4_factor)
+    VALUES (1, 10, 1, 1.2, 1.3, 1.4);
   `)
   // Additive migration: retain PDFs and immutable JSON snapshots byte-for-byte.
   // Unassigned legacy rows are inaccessible until protected first-account setup.
@@ -70,6 +90,9 @@ export function createStore(filename: string) {
       role: "TEXT NOT NULL DEFAULT 'user' CHECK(role IN ('user', 'admin'))",
       disabled: 'INTEGER NOT NULL DEFAULT 0 CHECK(disabled IN (0, 1))',
       must_change_password: 'INTEGER NOT NULL DEFAULT 0 CHECK(must_change_password IN (0, 1))',
+      membership_enrolled: 'INTEGER NOT NULL DEFAULT 0 CHECK(membership_enrolled IN (0, 1))',
+      membership_tier: 'INTEGER NOT NULL DEFAULT 1 CHECK(membership_tier BETWEEN 1 AND 4)',
+      membership_points: 'INTEGER NOT NULL DEFAULT 0 CHECK(membership_points >= 0)',
     })) {
       if (!userColumns.some(column => column.name === name)) db.exec(`ALTER TABLE users ADD COLUMN ${name} ${definition}`)
     }

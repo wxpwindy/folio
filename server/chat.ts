@@ -1,8 +1,8 @@
 import { load } from 'cheerio'
 import { z } from 'zod'
 import { AppError } from './ai.ts'
+import { lmStudioUrl as lmUrl, lmStudioHeaders as lmHeaders } from './lmstudio.ts'
 
-const lmUrl = 'http://127.0.0.1:1234/v1'
 const text = z.string().trim().min(1).max(12000)
 const searchPlanSchema = z.object({ query: z.string().trim().min(1).max(400) }).strict()
 const searchResultLimit = 3
@@ -69,9 +69,6 @@ async function fetchText(url: string, init: RequestInit, provider: string, timeo
 }
 function parseJson(value: string, provider: string): unknown {
   try { return JSON.parse(value) } catch { throw new AppError(502, `${provider} returned invalid JSON.`) }
-}
-function lmHeaders() {
-  return { 'Content-Type': 'application/json', ...(process.env.LMSTUDIO_API_KEY ? { Authorization: `Bearer ${process.env.LMSTUDIO_API_KEY}` } : {}) }
 }
 export async function listChatModels(signal?: AbortSignal) {
   const raw = parseJson(await fetchText(`${lmUrl}/models`, { headers: lmHeaders() }, 'LM Studio', 15000, signal), 'LM Studio')
