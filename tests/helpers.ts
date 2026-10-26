@@ -64,6 +64,11 @@ export const test = base.extend<{ anonymous: boolean; legacy: boolean; expectedH
       else if (request.method() === 'POST' && responseStatuses.get(request) === 204
         && /^http:\/\/127\.0\.0\.1:3101\/api\/admin\/users\/[a-f0-9-]{36}\/action$/.test(request.url())
         && request.failure()?.errorText === 'net::ERR_ABORTED') completedAdminAborts.push(failure)
+      // Chromium may also abort completed empty-body loyalty PATCH responses.
+      // Exempt only the exact local admin loyalty route with observed 204.
+      else if (request.method() === 'PATCH' && responseStatuses.get(request) === 204
+        && /^http:\/\/127\.0\.0\.1:3101\/api\/admin\/users\/[a-f0-9-]{36}\/loyalty$/.test(request.url())
+        && request.failure()?.errorText === 'net::ERR_ABORTED') completedAdminAborts.push(failure)
       else failedRequests.push(failure)
     })
     await context.route(/^https?:\/\//, async route => {

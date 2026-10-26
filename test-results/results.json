@@ -83,7 +83,7 @@
       "specs": [
         {
           "title": "optional password change validates, cancels, handles failure and prevents duplicate submissions",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -94,49 +94,36 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 1,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 0,
-                  "error": {
-                    "message": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝",
-                    "stack": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
-                  },
-                  "errors": [
-                    {
-                      "message": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 791,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-25T15:50:37.066Z",
+                  "startTime": "2026-10-25T17:23:35.689Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/peter/Documents/GitHub/folio/test-results/admin-optional-password-ch-7efe3-vents-duplicate-submissions-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/peter/Documents/GitHub/folio/test-results/admin-optional-password-ch-7efe3-vents-duplicate-submissions-chromium/trace.zip"
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9jaGFuZ2UtcGFzc3dvcmQ6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
                     }
                   ]
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "d4043a9dd1ab94463227-ef6d1d88bf562887f2f3",
           "file": "admin.spec.ts",
-          "line": 164,
+          "line": 165,
           "column": 1
         },
         {
           "title": "password change sign-out errors are shown and can be retried",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -147,44 +134,31 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 0,
-                  "error": {
-                    "message": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝",
-                    "stack": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
-                  },
-                  "errors": [
-                    {
-                      "message": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 309,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-25T15:50:37.258Z",
+                  "startTime": "2026-10-25T17:23:36.483Z",
                   "annotations": [],
                   "attachments": [
                     {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Users/peter/Documents/GitHub/folio/test-results/admin-password-change-sign-ca52b-re-shown-and-can-be-retried-chromium/error-context.md"
-                    },
-                    {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "/Users/peter/Documents/GitHub/folio/test-results/admin-password-change-sign-ca52b-re-shown-and-can-be-retried-chromium/trace.zip"
+                      "name": "browser-diagnostics",
+                      "contentType": "application/json",
+                      "body": "ewogICJjb25zb2xlRXJyb3JzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDUwMyAoU2VydmljZSBVbmF2YWlsYWJsZSkiCiAgXSwKICAidW5leHBlY3RlZCI6IFtdLAogICJleHRlcm5hbFJlcXVlc3RzIjogW10sCiAgImZhaWxlZFJlcXVlc3RzIjogW10sCiAgImNvbXBsZXRlZERlbGV0ZUFib3J0cyI6IFtdLAogICJjb21wbGV0ZWRBdXRoQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYXV0aC9sb2dvdXQ6IG5ldDo6RVJSX0FCT1JURUQiCiAgXSwKICAiY29tcGxldGVkQWRtaW5BYm9ydHMiOiBbXQp9"
                     }
                   ]
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "d4043a9dd1ab94463227-2db7ba5de929672bdec9",
           "file": "admin.spec.ts",
-          "line": 233,
+          "line": 234,
           "column": 1
         }
       ],
@@ -197,11 +171,11 @@
           "specs": [
             {
               "title": "username bootstrap, forced change, setup rotation, user controls and password recovery at 320px",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 30000,
+                  "timeout": 60000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chromium",
@@ -210,37 +184,24 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 0,
-                      "error": {
-                        "message": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝",
-                        "stack": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
-                      },
-                      "errors": [
-                        {
-                          "message": "Error: browserType.launch: Executable doesn't exist at /Users/peter/Library/Caches/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-mac-arm64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 2626,
+                      "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-25T15:50:36.869Z",
+                      "startTime": "2026-10-25T17:23:33.002Z",
                       "annotations": [],
                       "attachments": [
                         {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/peter/Documents/GitHub/folio/test-results/admin-administrator-workfl-8f2bb--password-recovery-at-320px-chromium/error-context.md"
-                        },
-                        {
-                          "name": "trace",
-                          "contentType": "application/zip",
-                          "path": "/Users/peter/Documents/GitHub/folio/test-results/admin-administrator-workfl-8f2bb--password-recovery-at-320px-chromium/trace.zip"
+                          "name": "browser-diagnostics",
+                          "contentType": "application/json",
+                          "body": "ewogICJjb25zb2xlRXJyb3JzIjogW10sCiAgInVuZXhwZWN0ZWQiOiBbXSwKICAiZXh0ZXJuYWxSZXF1ZXN0cyI6IFtdLAogICJmYWlsZWRSZXF1ZXN0cyI6IFtdLAogICJjb21wbGV0ZWREZWxldGVBYm9ydHMiOiBbXSwKICAiY29tcGxldGVkQXV0aEFib3J0cyI6IFsKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2F1dGgvbG9nb3V0OiBuZXQ6OkVSUl9BQk9SVEVEIgogIF0sCiAgImNvbXBsZXRlZEFkbWluQWJvcnRzIjogWwogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYWRtaW4vdXNlcnMvZDY0MDNiMzgtZjkyOS00ODc1LWFmZmEtMGUwZjZmMDFhZDQyL2xveWFsdHk6IG5ldDo6RVJSX0FCT1JURUQiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYWRtaW4vdXNlcnMvZDY0MDNiMzgtZjkyOS00ODc1LWFmZmEtMGUwZjZmMDFhZDQyL2FjdGlvbjogbmV0OjpFUlJfQUJPUlRFRCIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hZG1pbi91c2Vycy9kNjQwM2IzOC1mOTI5LTQ4NzUtYWZmYS0wZTBmNmYwMWFkNDIvYWN0aW9uOiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2FkbWluL3VzZXJzL2Q2NDAzYjM4LWY5MjktNDg3NS1hZmZhLTBlMGY2ZjAxYWQ0Mi9hY3Rpb246IG5ldDo6RVJSX0FCT1JURUQiLAogICAgImh0dHA6Ly8xMjcuMC4wLjE6MzEwMS9hcGkvYWRtaW4vdXNlcnMvZDY0MDNiMzgtZjkyOS00ODc1LWFmZmEtMGUwZjZmMDFhZDQyL2FjdGlvbjogbmV0OjpFUlJfQUJPUlRFRCIsCiAgICAiaHR0cDovLzEyNy4wLjAuMTozMTAxL2FwaS9hZG1pbi91c2Vycy9kNjQwM2IzOC1mOTI5LTQ4NzUtYWZmYS0wZTBmNmYwMWFkNDIvYWN0aW9uOiBuZXQ6OkVSUl9BQk9SVEVEIiwKICAgICJodHRwOi8vMTI3LjAuMC4xOjMxMDEvYXBpL2FkbWluL3VzZXJzL2Q2NDAzYjM4LWY5MjktNDg3NS1hZmZhLTBlMGY2ZjAxYWQ0Mi9hY3Rpb246IG5ldDo6RVJSX0FCT1JURUQiCiAgXQp9"
                         }
                       ]
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "d4043a9dd1ab94463227-5a23f9f814294217f092",
@@ -255,11 +216,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-25T15:50:35.737Z",
-    "duration": 1554.156,
-    "expected": 0,
+    "startTime": "2026-10-25T17:23:31.866Z",
+    "duration": 4972.746999999999,
+    "expected": 3,
     "skipped": 0,
-    "unexpected": 3,
+    "unexpected": 0,
     "flaky": 0
   }
 }

@@ -197,24 +197,24 @@ export function createApp(store: Store, generate: typeof generateResume = genera
       defaultProvider: process.env.FOLIO_AI_PROVIDER === 'lmstudio' ? 'lmstudio' : 'ollama',
     } })
   })
-  app.get('/api/loyalty/me', (_req, res) => {
+  const loyaltyMeGet = (_req: express.Request, res: express.Response) => {
     const store = res.locals.store as ReturnType<Store['forUser']>
     const userId = res.locals.user.id as string
     res.json({ profile: loyaltyProfile(store.db, userId), settings: getMembershipSettings(store.db) })
-  })
-  app.patch('/api/loyalty/me', (req, res) => {
+  }
+  const loyaltyMePatch = (req: express.Request, res: express.Response) => {
     const store = res.locals.store as ReturnType<Store['forUser']>
     const userId = res.locals.user.id as string
     const { enrolled } = z.object({ enrolled: z.boolean() }).strict().parse(req.body)
     store.db.prepare('UPDATE users SET membership_enrolled = ? WHERE id = ?').run(enrolled ? 1 : 0, userId)
     res.json({ profile: loyaltyProfile(store.db, userId), settings: getMembershipSettings(store.db) })
-  })
-  app.get('/api/admin/loyalty/settings', (_req, res) => {
+  }
+  const loyaltySettingsGet = (_req: express.Request, res: express.Response) => {
     if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to manage loyalty settings.')
     const store = res.locals.store as ReturnType<Store['forUser']>
     res.json(getMembershipSettings(store.db))
-  })
-  app.patch('/api/admin/loyalty/settings', (req, res) => {
+  }
+  const loyaltySettingsPatch = (req: express.Request, res: express.Response) => {
     if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to manage loyalty settings.')
     const store = res.locals.store as ReturnType<Store['forUser']>
     const parsed = membershipSettingsSchema.parse(req.body)
@@ -230,14 +230,14 @@ export function createApp(store: Store, generate: typeof generateResume = genera
       },
     })
     res.json(getMembershipSettings(store.db))
-  })
-  app.get('/api/admin/loyalty/events', (req, res) => {
+  }
+  const loyaltyEventsGet = (req: express.Request, res: express.Response) => {
     if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to view loyalty activity.')
     const store = res.locals.store as ReturnType<Store['forUser']>
     const limit = z.coerce.number().int().min(1).max(100).optional().parse(req.query.limit)
     res.json({ events: listLoyaltyEvents(store.db, limit) })
-  })
-  app.patch('/api/admin/users/:id/loyalty', (req, res) => {
+  }
+  const userLoyaltyPatch = (req: express.Request, res: express.Response) => {
     if (res.locals.user.role !== 'admin') throw new AppError(403, 'Administrator access is required to manage user loyalty levels.')
     const store = res.locals.store as ReturnType<Store['forUser']>
     const id = z.string().uuid().parse(req.params.id)
@@ -259,7 +259,20 @@ export function createApp(store: Store, generate: typeof generateResume = genera
       },
     })
     res.status(204).end()
-  })
+  }
+  app.get('/api/loyalty/me', loyaltyMeGet)
+  app.patch('/api/loyalty/me', loyaltyMePatch)
+  app.get('/api/admin/loyalty/settings', loyaltySettingsGet)
+  app.patch('/api/admin/loyalty/settings', loyaltySettingsPatch)
+  app.get('/api/admin/loyalty/events', loyaltyEventsGet)
+  app.patch('/api/admin/users/:id/loyalty', userLoyaltyPatch)
+  // Compatibility aliases for older/stale clients still using "membership" paths.
+  app.get('/api/membership/me', loyaltyMeGet)
+  app.patch('/api/membership/me', loyaltyMePatch)
+  app.get('/api/admin/membership/settings', loyaltySettingsGet)
+  app.patch('/api/admin/membership/settings', loyaltySettingsPatch)
+  app.get('/api/admin/membership/events', loyaltyEventsGet)
+  app.patch('/api/admin/users/:id/membership', userLoyaltyPatch)
   app.post('/api/base', upload.single('resume'), async (req, res) => {
     const store = res.locals.store as ReturnType<Store['forUser']>
     if (!req.file || req.file.buffer.subarray(0, 5).toString() !== '%PDF-') throw new AppError(400, 'Upload a valid PDF file (up to 10 MB).')

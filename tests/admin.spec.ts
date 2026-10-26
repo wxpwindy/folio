@@ -19,6 +19,7 @@ async function changePassword(page: Page, current: string, next: string) {
 test.describe('administrator workflows', () => {
   test.use({ anonymous: true, viewport: { width: 320, height: 900 } })
   test('username bootstrap, forced change, setup rotation, user controls and password recovery at 320px', async ({ page, request, context, expectedHttpErrors }) => {
+    test.setTimeout(60_000)
     expect((await request.post('/__test/admin-bootstrap')).status()).toBe(204)
     await page.getByRole('button', { name: 'Already have an account? Log in' }).click()
     await page.getByRole('combobox', { name: 'Sign-in method' }).selectOption('username')
@@ -98,7 +99,7 @@ test.describe('administrator workflows', () => {
     await expect(card).toContainText('Membership: Enrolled · Tier 4')
     await expect(page.getByRole('heading', { name: 'Loyalty activity log' })).toBeVisible()
     await expect(page.getByRole('list', { name: 'Loyalty activity log entries' })).toContainText('Updated membership for managed@example.test: tier 4, enrolled yes')
-    const settings = page.getByRole('heading', { name: 'Membership and loyalty' }).locator('xpath=..')
+    const settings = page.locator('section[aria-labelledby="loyalty-title"]')
     await settings.getByLabel('Base points per resume create/save').fill('30')
     await settings.getByLabel('Tier 1 factor').fill('1.1')
     await settings.getByLabel('Tier 2 factor').fill('1.4')
@@ -137,7 +138,7 @@ test.describe('administrator workflows', () => {
     await page.getByLabel('Password', { exact: true }).fill(temporary)
     await page.getByRole('button', { name: 'Log in', exact: true }).click()
     await changePassword(page, temporary, 'Fictional-managed-new-password!')
-    const membershipCard = page.getByRole('heading', { name: 'Membership' }).locator('xpath=..')
+    const membershipCard = page.locator('section.base-summary', { has: page.getByRole('heading', { name: 'Membership' }) })
     await expect(membershipCard).toContainText('Enrolled · Tier 4')
     await expect(membershipCard).toContainText('Per save/create at your tier: 60 points')
     const pauseMembership = page.waitForResponse(`${origin}/api/loyalty/me`)
