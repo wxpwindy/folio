@@ -107,7 +107,12 @@ export function createApp(store: Store, generate: typeof generateResume = genera
     const host = req.hostname
     if (!['localhost', '127.0.0.1', '[::1]'].includes(host)) return res.status(403).json({ error: 'Only local access is allowed.' })
     const origin = req.headers.origin
-    const permitted = new Set(['http://127.0.0.1:5173', 'http://localhost:5173', 'http://127.0.0.1:4173', 'http://localhost:4173', `http://${req.headers.host}`])
+    const permitted = new Set(['http://127.0.0.1:5173', 'http://localhost:5173', 'http://127.0.0.1:4173', 'http://localhost:4173'])
+    const currentHost = req.headers.host
+    if (currentHost) {
+      permitted.add(`http://${currentHost}`)
+      permitted.add(`https://${currentHost}`)
+    }
     if (origin && !permitted.has(origin)) return res.status(403).json({ error: 'Cross-origin requests are not allowed.' })
     if (req.path.startsWith('/api') && !['GET', 'HEAD', 'OPTIONS'].includes(req.method) && req.get('X-Folio-Request') !== '1') {
       return res.status(403).json({ error: 'Missing request protection header. Reload Folio and try again.' })

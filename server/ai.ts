@@ -1,8 +1,28 @@
 import { z } from 'zod'
-import { lmStudioUrl, lmStudioHeaders, lmStudioOutputSchema } from './lmstudio.ts'
+import { lmStudioUrl, lmStudioHeaders, lmStudioOutputSchema, lmStudioResolveModel } from './lmstudio.ts'
 
 export class AppError extends Error {
   constructor(public status: number, message: string) { super(message) }
+}
+
+function aiDebugEnabled() {
+  return process.env.FOLIO_AI_DEBUG_OUTPUT === '1'
+}
+
+function logAiDebug(provider: 'ollama' | 'openai' | 'lmstudio', model: string, stage: string, details: string) {
+  if (!aiDebugEnabled()) return
+  console.info(`[ai-debug] provider=${provider} model=${model} stage=${stage} ${details}`)
+}
+
+function providerTimeoutMs(provider: 'ollama' | 'openai' | 'lmstudio'): number {
+  const envName = provider === 'openai' ? 'OPENAI_TIMEOUT_MS' : provider === 'lmstudio' ? 'LMSTUDIO_TIMEOUT_MS' : 'OLLAMA_TIMEOUT_MS'
+  const fallback = provider === 'openai' ? 180_000 : 600_000
+  const raw = process.env[envName]?.trim()
+  if (!raw) return fallback
+  const parsed = Number(raw)
+  if (!Number.isFinite(parsed)) return fallback
+  // Keep a safe bounded range so accidental values cannot hang requests forever.
+  return Math.min(3_600_000, Math.max(15_000, Math.trunc(parsed)))
 }
 
 export const generationSchema = z.object({
@@ -114,6 +134,9 @@ export async function requestModel(
   errors: { consentMessage: string; invalidMessage: string },
 ): Promise<unknown> {
   let response: Response
+  const timeoutMs = providerTimeoutMs(input.provider)
+  const timeoutLabel = `${Math.round((timeoutMs / 60000) * 10) / 10}`
+  logAiDebug(input.provider, input.model, 'request:start', `timeoutMs=${timeoutMs} messageCount=${messages.length}`)
   try {
     if (input.provider === 'openai') {
       if (!input.cloudConsent) throw new AppError(400, errors.consentMessage)
@@ -124,15 +147,15 @@ export async function requestModel(
         redirect: 'error',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
         body: JSON.stringify({ model: input.model, messages, response_format: { type: 'json_object' } }),
-        signal: AbortSignal.timeout(180000),
+        signal: AbortSignal.timeout(timeoutMs),
       })
     } else if (input.provider === 'lmstudio') {
       response = await fetch(`${lmStudioUrl}/chat/completions`, {
         method: 'POST', redirect: 'error', headers: lmStudioHeaders(),
-        body: JSON.stringify({ model: input.model, messages, stream: false, temperature: 0.2,
+        body: JSON.stringify({ model: lmStudioResolveModel(input.model), messages, stream: false, temperature: 0.2,
           response_format: { type: 'json_schema', json_schema: { name: 'folio_document', strict: true, schema: lmStudioOutputSchema(format) } },
         }),
-        signal: AbortSignal.timeout(180000),
+        signal: AbortSignal.timeout(timeoutMs),
       })
     } else {
       const url = new URL(process.env.OLLAMA_URL || 'http://127.0.0.1:11434')
@@ -142,13 +165,13 @@ export async function requestModel(
       response = await fetch(new URL('/api/chat', url), {
         method: 'POST', redirect: 'error', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ model: input.model, messages, stream: false, format, options: { temperature: 0.2, num_ctx: 16384 } }),
-        signal: AbortSignal.timeout(180000),
+        signal: AbortSignal.timeout(timeoutMs),
       })
     }
   } catch (error) {
     if (error instanceof AppError) throw error
     if (error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name)) {
-      throw new AppError(504, 'Generation timed out after 3 minutes. Try a smaller model or shorter source text.')
+      throw new AppError(504, `Generation timed out after ${timeoutLabel} minutes. Try a smaller model, shorter source text, or increase ${input.provider === 'openai' ? 'OPENAI_TIMEOUT_MS' : input.provider === 'lmstudio' ? 'LMSTUDIO_TIMEOUT_MS' : 'OLLAMA_TIMEOUT_MS'}.`)
     }
     throw new AppError(502, input.provider === 'ollama'
       ? 'Cannot reach Ollama. Open the Ollama app or run ollama serve locally. Then use Check connection in AI settings and select an installed model.'
@@ -156,6 +179,7 @@ export async function requestModel(
       : 'Cannot reach OpenAI. Check your internet connection and try again.')
   }
   if (!response.ok) {
+    logAiDebug(input.provider, input.model, 'response:error', `status=${response.status}`)
     if (response.status === 401) throw new AppError(401, input.provider === 'lmstudio' ? 'LM Studio requires a valid server token. Check LMSTUDIO_API_KEY on the Folio server.' : 'The AI provider rejected your API key. Check AI settings.')
     if (response.status === 429) throw new AppError(429, 'The AI provider rate limit or quota was reached. Check your account or try later.')
     if (response.status === 404) throw new AppError(400, input.provider === 'lmstudio' ? 'LM Studio model not found. Load the selected model and check its identifier in AI settings.' : 'Model not found. Check the model name and download it in Ollama if needed.')
@@ -164,8 +188,11 @@ export async function requestModel(
   try {
     const data = await response.json()
     const content = input.provider === 'ollama' ? data.message?.content : data.choices?.[0]?.message?.content
-    return JSON.parse(content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''))
+    const raw = typeof content === 'string' ? content : String(content)
+    logAiDebug(input.provider, input.model, 'response:raw', `length=${raw.length}\n${raw}`)
+    return JSON.parse(raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''))
   } catch {
+    logAiDebug(input.provider, input.model, 'response:parse-failed', 'Unable to parse JSON output from model response.')
     throw new AppError(502, errors.invalidMessage)
   }
 }

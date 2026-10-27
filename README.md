@@ -210,6 +210,10 @@ Configure these options in your private environment file. Restart the server aft
 | `OPENAI_MODEL` | `gpt-4o-mini` |
 | `OPENAI_API_KEY` | Optional server-side key |
 | `LMSTUDIO_API_KEY` | Optional token for LM Studio's local server at port 1234 |
+| `LMSTUDIO_TIMEOUT_MS` | Provider request timeout in milliseconds (default `600000` for local LM Studio generation) |
+| `OLLAMA_TIMEOUT_MS` | Provider request timeout in milliseconds (default `600000` for local Ollama generation) |
+| `OPENAI_TIMEOUT_MS` | Provider request timeout in milliseconds (default `180000` for OpenAI generation) |
+| `FOLIO_AI_DEBUG_OUTPUT` | Set to `1` to log raw model output for generation requests to server logs (debug only; may include sensitive resume content) |
 | `BRAVE_SEARCH_API_KEY` | Optional server-side Brave Search key; otherwise DuckDuckGo HTML search is used |
 | `DATA_DIR` | `data` relative to the project root |
 | `PDF_FONT_PATH` | Optional path to a Unicode TTF/OTF/TTC outline font covering all resume characters |

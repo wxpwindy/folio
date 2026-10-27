@@ -49,6 +49,9 @@ export async function request<T>(path: string, init?: RequestInit): Promise<T> {
       window.dispatchEvent(new CustomEvent(SESSION_EXPIRED_EVENT))
     }
     if (path === '/auth/login' && response.status === 401) throw new Error('Invalid credentials. Check your email, phone number or username and password.')
+    if (response.status === 504 && !body.error) {
+      throw new Error('Generation timed out at the gateway. If using a local model, choose a smaller model or increase the server/provider timeout settings and reverse-proxy timeout.')
+    }
     throw new Error(body.error || `Request failed (${response.status}). Please try again.`)
   }
   const result = response.status === 204 ? undefined as T : await response.json() as T

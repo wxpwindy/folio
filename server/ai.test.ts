@@ -386,7 +386,7 @@ describe('AI provider adapter (mocked network only)', { concurrency: false }, ()
     for (const name of ['TimeoutError', 'AbortError']) {
       it(`maps ${provider} ${name} to a generation timeout`, async () => {
         fetchMock.mock.mockImplementation(async () => { throw new DOMException('test timeout', name) })
-        await assert.rejects(generateResume(providerInput, baseText), appError(504, /timed out after 3 minutes/))
+        await assert.rejects(generateResume(providerInput, baseText), appError(504, /timed out after/))
         assert.equal(fetchMock.mock.callCount(), 1)
       })
     }

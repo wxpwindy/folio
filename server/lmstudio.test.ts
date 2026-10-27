@@ -5,6 +5,7 @@ import { AppError, generateResume, generationSchema, requestModel } from './ai.t
 import { cleanResume } from './clean-resume.ts'
 import { translateDocument } from './translation.ts'
 import { createApp } from './app.ts'
+import { lmStudioDisplayModels, lmStudioResolveModel } from './lmstudio.ts'
 import { authenticatedRequest, createTestStore } from './test-support.ts'
 
 const text = 'Alex Example\nalex@example.test\nEXPERIENCE\nMaintained TypeScript services and wrote automated tests in 2024 with an engineering team.'
@@ -41,12 +42,17 @@ describe('LM Studio resume provider', { concurrency: false }, () => {
       assert.equal(new Headers(init?.headers).has('Authorization'), false)
       assert.equal(String(init?.body).includes('unrelated-openai-key'), false)
       const body = JSON.parse(String(init?.body))
-      assert.equal(body.model, 'google/gemma-4-e4b')
+      assert.equal(body.model, 'gemma3:4b')
       assert.equal(body.stream, false)
       assert.equal(body.response_format.type, 'json_schema')
       assert.equal(body.response_format.json_schema.strict, true)
       assert.equal(JSON.stringify(body.response_format.json_schema.schema).includes('"pattern"'), false)
     }
+  })
+  it('resolves and displays the Gemma compatibility alias', () => {
+    assert.equal(lmStudioResolveModel('google/gemma-4-e4b'), 'gemma3:4b')
+    assert.equal(lmStudioResolveModel('fictional-chat'), 'fictional-chat')
+    assert.deepEqual(lmStudioDisplayModels([' gemma3:4b ', 'gemma3:4b', 'other']), ['google/gemma-4-e4b', 'gemma3:4b', 'other'])
   })
   it('omits unsupported grammar patterns but still validates language content before accepting output', async () => {
     const fetcher = mock.method(globalThis, 'fetch', async (_url: string | URL | Request, _init?: RequestInit) => Response.json({ choices: [{ message: { content: JSON.stringify({ englishText: text, chineseText: `${text}\nNot Chinese.` }) } }] }))

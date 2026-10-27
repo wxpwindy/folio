@@ -163,6 +163,11 @@ describe('chat adapter (synthetic providers only)', { concurrency: false }, () =
     assert.equal(network.mock.callCount(), 2)
   })
 
+  it('adds google/gemma-4-e4b alias when gemma3:4b is available', async () => {
+    network.mock.mockImplementation(async () => Response.json({ data: [{ id: 'gemma3:4b' }, { id: 'other' }] }))
+    assert.deepEqual(await listChatModels(), { models: ['google/gemma-4-e4b', 'gemma3:4b', 'other'], searchProvider: 'DuckDuckGo' })
+  })
+
   it('accepts empty/100-model lists and rejects malformed, blank, overlong and oversized lists', async () => {
     for (const data of [[], Array.from({ length: 100 }, (_, i) => ({ id: `model-${i}` }))]) {
       network.mock.mockImplementation(async () => Response.json({ data }))
