@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { AppError, generationSchema, requestModel } from './ai.ts'
 
-export const cleanResumeSchema = generationSchema.pick({ baseId: true, provider: true, model: true, apiKey: true, cloudConsent: true })
+export const cleanResumeSchema = generationSchema.pick({ baseId: true, provider: true, model: true, baseUrl: true, apiKey: true, cloudConsent: true })
 export type CleanResumeInput = z.infer<typeof cleanResumeSchema>
 export const cleanResumeOutputSchema = z.object({
   englishText: z.string().trim().min(50).max(50000).regex(/[A-Za-z]/),

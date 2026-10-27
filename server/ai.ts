@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { requestByok } from './byok.ts'
 import { lmStudioUrl, lmStudioHeaders, lmStudioOutputSchema, lmStudioResolveModel } from './lmstudio.ts'
 
 export class AppError extends Error {
@@ -9,12 +10,15 @@ function aiDebugEnabled() {
   return process.env.FOLIO_AI_DEBUG_OUTPUT === '1'
 }
 
-function logAiDebug(provider: 'ollama' | 'openai' | 'lmstudio', model: string, stage: string, details: string) {
+function logAiDebug(provider: 'ollama' | 'openai' | 'lmstudio' | 'byok', model: string, stage: string, details: string) {
+  // An untrusted remote provider may echo credentials in any response.
+  if (provider === 'byok') return
   if (!aiDebugEnabled()) return
   console.info(`[ai-debug] provider=${provider} model=${model} stage=${stage} ${details}`)
 }
 
-function providerTimeoutMs(provider: 'ollama' | 'openai' | 'lmstudio'): number {
+function providerTimeoutMs(provider: 'ollama' | 'openai' | 'lmstudio' | 'byok'): number {
+  if (provider === 'byok') return 180_000
   const envName = provider === 'openai' ? 'OPENAI_TIMEOUT_MS' : provider === 'lmstudio' ? 'LMSTUDIO_TIMEOUT_MS' : 'OLLAMA_TIMEOUT_MS'
   const fallback = provider === 'openai' ? 180_000 : 600_000
   const raw = process.env[envName]?.trim()
@@ -30,8 +34,9 @@ export const generationSchema = z.object({
   role: z.string().trim().min(1).max(150),
   company: z.string().trim().min(1).max(150),
   jobDescription: z.string().trim().min(80, 'Add at least 80 characters of the job description.').max(30000),
-  provider: z.enum(['ollama', 'openai', 'lmstudio']),
+  provider: z.enum(['ollama', 'openai', 'lmstudio', 'byok']),
   model: z.string().trim().min(1).max(100),
+  baseUrl: z.string().trim().min(1).max(2000).optional(),
   apiKey: z.string().max(500).optional(),
   cloudConsent: z.boolean().optional(),
   documentType: z.enum(['resume', 'cover-letter']).optional(),
@@ -128,7 +133,7 @@ export async function generateResume(input: GenerationInput, baseText: string): 
 // One provider transport keeps local-only URLs, consent, timeouts and safe
 // errors identical for tailoring and translation. Never persist these inputs.
 export async function requestModel(
-  input: Pick<GenerationInput, 'provider' | 'model' | 'apiKey' | 'cloudConsent'>,
+  input: Pick<GenerationInput, 'provider' | 'model' | 'baseUrl' | 'apiKey' | 'cloudConsent'>,
   messages: { role: string; content: string }[],
   format: Record<string, unknown>,
   errors: { consentMessage: string; invalidMessage: string },
@@ -138,7 +143,14 @@ export async function requestModel(
   const timeoutLabel = `${Math.round((timeoutMs / 60000) * 10) / 10}`
   logAiDebug(input.provider, input.model, 'request:start', `timeoutMs=${timeoutMs} messageCount=${messages.length}`)
   try {
-    if (input.provider === 'openai') {
+    if (input.provider === 'byok') {
+      if (input.cloudConsent !== true) throw new AppError(400, errors.consentMessage.replace('OpenAI', 'your custom BYOK provider for this operation'))
+      const key = input.apiKey?.trim()
+      if (!key || key.length > 500 || !/^[\x21-\x7e]+$/.test(key)) throw new AppError(400, 'Add a valid BYOK API key in AI settings for this operation.')
+      response = await requestByok(input.baseUrl, key, JSON.stringify({
+        model: input.model, messages, response_format: { type: 'json_object' },
+      }))
+    } else if (input.provider === 'openai') {
       if (!input.cloudConsent) throw new AppError(400, errors.consentMessage)
       const key = input.apiKey?.trim() || process.env.OPENAI_API_KEY
       if (!key) throw new AppError(400, 'Add your OpenAI API key in AI settings or configure OPENAI_API_KEY on the server.')

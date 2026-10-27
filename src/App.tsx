@@ -9,15 +9,17 @@ import { date, downloadPdf, errorMessage, getFeatures, getLoyalty, request, setL
 import { CleanResumeForm, GenerateForm, InlineError, ResumePaper, SettingsForm, TranslationActions, TranslationForm, UploadArea, VersionDetail } from './components'
 import './App.css'
 
-const defaults: Settings = { provider: 'ollama', ollamaModel: '', openaiModel: '', lmstudioModel: '', apiKey: '' }
+const defaults: Settings = { provider: 'ollama', ollamaModel: '', openaiModel: '', lmstudioModel: '', apiKey: '', byokModel: '', byokBaseUrl: '', byokApiKey: '' }
 function loadSettings(userId: string): Settings {
   try {
     const saved = JSON.parse(localStorage.getItem(`folio-ai-settings:${userId}`) || '{}')
-    return { ...defaults, provider: saved.provider === 'lmstudio' ? 'lmstudio' : saved.provider === 'openai' ? 'openai' : 'ollama',
+    return { ...defaults, provider: saved.provider === 'byok' ? 'byok' : saved.provider === 'lmstudio' ? 'lmstudio' : saved.provider === 'openai' ? 'openai' : 'ollama',
       ollamaModel: typeof saved.ollamaModel === 'string' ? saved.ollamaModel : '',
       lmstudioModel: typeof saved.lmstudioModel === 'string' ? saved.lmstudioModel : '',
       lmstudioDefaultModel: typeof saved.lmstudioDefaultModel === 'string' ? saved.lmstudioDefaultModel : undefined,
-      openaiModel: typeof saved.openaiModel === 'string' ? saved.openaiModel : '' }
+      openaiModel: typeof saved.openaiModel === 'string' ? saved.openaiModel : '',
+      byokModel: typeof saved.byokModel === 'string' ? saved.byokModel : '',
+      byokBaseUrl: typeof saved.byokBaseUrl === 'string' ? saved.byokBaseUrl : '' }
   } catch { return defaults }
 }
 export interface AppProps { user: AuthUser; onLogout: () => Promise<void>; onAuthenticated: (session: AuthSession) => void }
@@ -68,7 +70,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
         // Activate the installation's LM Studio default once for legacy preferences.
         // Follow a changed installation model default, but retain custom models.
         // The recorded default also lets users explicitly reselect an older model.
-        provider: data.config.defaultProvider === 'lmstudio' && !old.lmstudioModel ? 'lmstudio' : old.provider,
+        provider: data.config.defaultProvider === 'lmstudio' && !old.lmstudioModel && old.provider !== 'byok' ? 'lmstudio' : old.provider,
         lmstudioModel: !old.lmstudioModel || (data.config.defaultProvider === 'lmstudio' && old.lmstudioModel === (old.lmstudioDefaultModel || 'google/gemma-4-12b'))
           ? data.config.lmstudioModel : old.lmstudioModel,
         lmstudioDefaultModel: data.config.lmstudioModel,
@@ -113,7 +115,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
     }
   }, [accountPage, connectionAttempt, featureAttempt])
   useEffect(() => {
-    try { localStorage.setItem(`folio-ai-settings:${user.id}`, JSON.stringify({ provider: settings.provider, ollamaModel: settings.ollamaModel, openaiModel: settings.openaiModel, lmstudioModel: settings.lmstudioModel, lmstudioDefaultModel: settings.lmstudioDefaultModel })) } catch { /* Private browsing may disable storage. */ }
+    try { localStorage.setItem(`folio-ai-settings:${user.id}`, JSON.stringify({ provider: settings.provider, ollamaModel: settings.ollamaModel, openaiModel: settings.openaiModel, lmstudioModel: settings.lmstudioModel, lmstudioDefaultModel: settings.lmstudioDefaultModel, byokModel: settings.byokModel, byokBaseUrl: settings.byokBaseUrl })) } catch { /* Private browsing may disable storage. */ }
   }, [settings, user.id])
   useEffect(() => {
     if (!notice) return
@@ -221,7 +223,7 @@ function App({ user, onLogout, onAuthenticated }: AppProps) {
   if (accountPage === 'admin' && user.role === 'admin') return <Administration user={user} onClose={() => {
     setFeatures(null); setPage('overview'); setAccountPage(null)
   }} />
-  if (accountPage === 'password') return <PasswordChange onChanged={session => { setSettings(old => ({ ...old, apiKey: '' })); setAccountPage(null); onAuthenticated(session) }} onLogout={onLogout} onCancel={() => setAccountPage(null)} />
+  if (accountPage === 'password') return <PasswordChange onChanged={session => { setSettings(old => ({ ...old, apiKey: '', byokApiKey: '' })); setAccountPage(null); onAuthenticated(session) }} onLogout={onLogout} onCancel={() => setAccountPage(null)} />
   return <div className="app-shell" inert={loggingOut} aria-busy={loggingOut}>
     <a className="skip-link" href="#main">Skip to content</a>
     <input ref={inputRef} type="file" accept="application/pdf,.pdf" className="sr-only" aria-label="Upload base resume PDF" onChange={e => { void upload(e.target.files?.[0]); e.target.value = '' }} disabled={uploading || careerRefreshing || !workspace} />

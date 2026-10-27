@@ -180,8 +180,8 @@ test('sign out guards dirty work, clears keys and consent, and switches account-
   await form.getByRole('button', { name: 'Close dialog', exact: true }).click()
   const storage = await page.evaluate(() => ({ local: { ...localStorage }, session: { ...sessionStorage } }))
   expect(storage.local).not.toHaveProperty('folio-ai-settings')
-  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-first-account-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b' })
-  expect(JSON.parse(storage.local[`folio-ai-settings:${other.user!.id}`])).toEqual({ provider: 'ollama', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-cloud-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b' })
+  expect(JSON.parse(storage.local[testSettingsKey])).toEqual({ provider: 'openai', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-first-account-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b', byokBaseUrl: '', byokModel: '' })
+  expect(JSON.parse(storage.local[`folio-ai-settings:${other.user!.id}`])).toEqual({ provider: 'ollama', ollamaModel: 'e2e-local-model', openaiModel: 'e2e-cloud-model', lmstudioModel: 'google/gemma-4-12b', lmstudioDefaultModel: 'google/gemma-4-12b', byokBaseUrl: '', byokModel: '' })
   for (const data of [storage, await context.cookies(), await workspace(request)]) {
     expect(JSON.stringify(data)).not.toContain(fakeKey)
     expect(JSON.stringify(data)).not.toMatch(/cloudConsent|"consent"/i)

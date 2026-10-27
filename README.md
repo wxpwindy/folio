@@ -2,7 +2,7 @@
 
 One base resume. A thoughtful version for every opportunity.
 
-Folio imports a PDF resume and uses local LM Studio, Ollama or OpenAI to create separate, editable resumes and cover letters for each job description, clean a bilingual base resume, or explicitly translate a saved document into Simplified Chinese or English. Original PDFs, extracted text, job descriptions, source snapshots, and generated documents are stored in SQLite on your computer.
+Folio imports a PDF resume and uses local LM Studio, Ollama, OpenAI, or your own OpenAI-compatible provider (BYOK) to create separate, editable resumes and cover letters for each job description, clean a bilingual base resume, or explicitly translate a saved document into Simplified Chinese or English. Original PDFs, extracted text, job descriptions, source snapshots, and generated documents are stored in SQLite on your computer.
 
 ## Start here
 
@@ -196,6 +196,20 @@ Alternatively, set `OPENAI_API_KEY` in the local, Git-ignored environment file. 
 Every OpenAI generation requires explicit confirmation before the base resume text and job description are sent to OpenAI. The original PDF binary is not sent. OpenAI's service policies apply to that request.
 
 Explicit document translation instead requires separate per-translation consent and sends only the saved document text, not an additional base snapshot or job description. Target/key changes reset translation consent; consent is never persisted.
+
+### BYOK — your own OpenAI-compatible provider
+
+Select **BYOK → Your own model** in **AI settings**, then enter:
+
+- **API base URL**, such as `https://api.example.com/v1`, including the provider's version path. Folio appends `/chat/completions`; do not enter the full chat-completions endpoint.
+- **BYOK model**, the exact model ID supported by that provider.
+- **BYOK API key**, your key for that endpoint. The provider must support OpenAI-compatible chat completions and JSON mode (`response_format: { type: "json_object" }`); native Anthropic/Gemini APIs are not interchangeable with this protocol.
+
+BYOK applies to tailored resumes, cover letters, bilingual cleanup, and document translations. Each operation displays the destination and requires explicit consent before sending document text. Original PDF binaries are not sent. Provider privacy policies and API charges apply. Web chat remains a separate LM Studio feature.
+
+Only the provider, base URL, and model preferences are saved in account-scoped browser storage. The BYOK key is separate from the OpenAI key, stays in memory, and is cleared on reload, logout, or password change. Changing the base URL clears the BYOK key; re-enter the correct key for the new destination. Folio never falls back to the server's OpenAI key for BYOK.
+
+Only public HTTPS endpoints are supported. URLs with credentials, query parameters, or fragments are rejected; private/local destinations and redirects are blocked. For local models, use the dedicated **LM Studio** or **Ollama** options instead. Provider authentication, compatibility, and model availability are checked when you submit an operation.
 
 ### Environment options
 

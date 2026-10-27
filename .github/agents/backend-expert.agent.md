@@ -3,6 +3,7 @@ name: backend-expert
 description: "Specialized agent for production-grade backend work in this Folio codebase. Use when implementing or reviewing Express/TypeScript API routes, authentication/session flows, security hardening, incident diagnostics, performance tuning, and reliability safeguards."
 tools:
   - edit
+  - execute
   - search
   - context/*
 ---

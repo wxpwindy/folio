@@ -19,7 +19,7 @@ export interface LoginRequest {
 export interface SignupRequest extends LoginRequest { setupCode?: string }
 
 export type DocumentType = 'resume' | 'cover-letter'
-export type AiProvider = 'ollama' | 'openai' | 'lmstudio'
+export type AiProvider = 'ollama' | 'openai' | 'lmstudio' | 'byok'
 
 export type TranslationTargetLanguage = 'zh-Hans' | 'en'
 export interface TranslationSnapshot {
@@ -43,7 +43,7 @@ export interface TranslationSource {
 }
 export interface TranslationRequest {
   sourceType: 'base' | 'version'; sourceId: string; targetLanguage: TranslationTargetLanguage
-  provider: AiProvider; model: string; apiKey?: string; cloudConsent?: boolean
+  provider: AiProvider; model: string; apiKey?: string; cloudConsent?: boolean; baseUrl?: string
 }
 
 export interface BaseResume {
@@ -92,6 +92,7 @@ export interface LoyaltyAuditEvent {
 }
 export interface Settings {
   provider: AiProvider; ollamaModel: string; openaiModel: string; lmstudioModel: string; apiKey: string
+  byokModel: string; byokBaseUrl: string; byokApiKey: string
   lmstudioDefaultModel?: string
 }
 

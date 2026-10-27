@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { AppError, generationSchema, requestModel } from './ai.ts'
 
-export const translationSchema = generationSchema.pick({ provider: true, model: true, apiKey: true, cloudConsent: true }).extend({
+export const translationSchema = generationSchema.pick({ provider: true, model: true, baseUrl: true, apiKey: true, cloudConsent: true }).extend({
   sourceType: z.enum(['base', 'version']),
   sourceId: z.string().uuid(),
   targetLanguage: z.enum(['zh-Hans', 'en']),

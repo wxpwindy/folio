@@ -4,12 +4,29 @@ import { ArrowDownToLine, Check, CheckCheck, CircleAlert, FileText, LoaderCircle
 import type { AiProvider, BaseResume, DocumentType, GenerationResponse, ResumeVersion, Settings, TranslationRequest, TranslationSource, TranslationTargetLanguage } from './types'
 import { date, downloadPdf, errorMessage, request } from './api'
 
-const providerNames: Record<AiProvider, string> = { ollama: 'Ollama', openai: 'OpenAI', lmstudio: 'LM Studio' }
+const providerNames: Record<AiProvider, string> = { ollama: 'Ollama', openai: 'OpenAI', lmstudio: 'LM Studio', byok: 'BYOK' }
 function selectedModel(settings: Settings) {
-  return settings.provider === 'lmstudio' ? settings.lmstudioModel : settings.provider === 'ollama' ? settings.ollamaModel : settings.openaiModel
+  return settings.provider === 'byok' ? settings.byokModel : settings.provider === 'lmstudio' ? settings.lmstudioModel : settings.provider === 'ollama' ? settings.ollamaModel : settings.openaiModel
+}
+function usesCloud(settings: Settings) {
+  return settings.provider === 'openai' || settings.provider === 'byok'
+}
+function selectedApiKey(settings: Settings) {
+  return settings.provider === 'byok' ? settings.byokApiKey : settings.apiKey
+}
+function cloudDestination(settings: Settings) {
+  return settings.provider === 'byok' ? `BYOK (${settings.byokBaseUrl})` : 'OpenAI'
+}
+function cloudOptions(settings: Settings, apiKey: string, consent: boolean) {
+  return usesCloud(settings) ? { apiKey, cloudConsent: consent, ...(settings.provider === 'byok' ? { baseUrl: settings.byokBaseUrl } : {}) } : {}
+}
+function canProcess(settings: Settings, configured: boolean, apiKey: string, consent: boolean) {
+  return !!selectedModel(settings).trim()
+    && (settings.provider !== 'byok' || !!settings.byokBaseUrl.trim())
+    && (!usesCloud(settings) || (consent && ((settings.provider === 'openai' && configured) || !!apiKey.trim())))
 }
 function GenerationProvider({ settings }: { settings: Settings }) {
-  return <div className="generation-provider">{settings.provider === 'openai' ? <Sparkles size={16} /> : <LockKeyhole size={16} />}<span>{settings.provider === 'openai' ? 'Processed in the cloud with OpenAI' : `Processed locally with ${providerNames[settings.provider]}`} <strong>· {selectedModel(settings) || 'No model selected'}</strong></span></div>
+  return <div className="generation-provider">{usesCloud(settings) ? <Sparkles size={16} /> : <LockKeyhole size={16} />}<span>{usesCloud(settings) ? `Processed in the cloud with ${cloudDestination(settings)}` : `Processed locally with ${providerNames[settings.provider]}`} <strong>· {selectedModel(settings) || 'No model selected'}</strong></span></div>
 }
 function Modal({ title, eyebrow, onClose, children, wide = false, busy = false }: {
   title: string; eyebrow: string; onClose: () => void; children: ReactNode; wide?: boolean; busy?: boolean
@@ -48,8 +65,21 @@ export function SettingsForm({ settings, configured, onSave, onClose }: { settin
   const [draft, setDraft] = useState(settings)
   const [models, setModels] = useState<string[] | null>(null)
   const [checking, setChecking] = useState(false), [connectionError, setConnectionError] = useState('')
+  const [settingsError, setSettingsError] = useState('')
   function selectProvider(provider: AiProvider) {
-    setDraft(old => ({ ...old, provider })); setModels(null); setConnectionError('')
+    setDraft(old => ({ ...old, provider })); setModels(null); setConnectionError(''); setSettingsError('')
+  }
+  function save(event: FormEvent) {
+    event.preventDefault()
+    if (draft.provider !== 'byok') { onSave(draft); return }
+    let url: URL
+    try { url = new URL(draft.byokBaseUrl.trim()) }
+    catch { setSettingsError('Enter a valid HTTPS API base URL.'); return }
+    if (url.protocol !== 'https:' || url.username || url.password || url.search || url.hash) {
+      setSettingsError('Use an HTTPS API base URL without credentials, query parameters, or a fragment.'); return
+    }
+    if (!draft.byokModel.trim()) { setSettingsError('Enter the provider’s exact model name.'); return }
+    onSave({ ...draft, byokBaseUrl: url.href.replace(/\/+$/, ''), byokModel: draft.byokModel.trim() })
   }
   async function checkConnection() {
     setChecking(true); setConnectionError(''); setModels(null)
@@ -58,12 +88,13 @@ export function SettingsForm({ settings, configured, onSave, onClose }: { settin
     finally { setChecking(false) }
   }
   return <Modal title="Your AI, your choice." eyebrow="AI SETTINGS" onClose={onClose}>
-    <form onSubmit={event => { event.preventDefault(); onSave(draft) }}><div className="modal-body">
+    <form onSubmit={save}><div className="modal-body">
       <p className="muted">Choose where your resume is processed. Your versions are always stored on this computer.</p>
       <div className="provider-options">
         <button type="button" className={`provider-option ${draft.provider === 'lmstudio' ? 'selected' : ''}`} disabled={checking} onClick={() => selectProvider('lmstudio')} aria-pressed={draft.provider === 'lmstudio'}><LockKeyhole size={22} /><strong>LM Studio</strong><span>Local & private</span>{draft.provider === 'lmstudio' && <Check size={18} />}</button>
         <button type="button" className={`provider-option ${draft.provider === 'ollama' ? 'selected' : ''}`} disabled={checking} onClick={() => selectProvider('ollama')} aria-pressed={draft.provider === 'ollama'}><LockKeyhole size={22} /><strong>Ollama</strong><span>Local & private</span>{draft.provider === 'ollama' && <Check size={18} />}</button>
         <button type="button" className={`provider-option ${draft.provider === 'openai' ? 'selected' : ''}`} disabled={checking} onClick={() => selectProvider('openai')} aria-pressed={draft.provider === 'openai'}><Sparkles size={22} /><strong>OpenAI</strong><span>Cloud processing</span>{draft.provider === 'openai' && <Check size={18} />}</button>
+        <button type="button" className={`provider-option ${draft.provider === 'byok' ? 'selected' : ''}`} disabled={checking} onClick={() => selectProvider('byok')} aria-pressed={draft.provider === 'byok'}><Sparkles size={22} /><strong>BYOK</strong><span>Your own model</span>{draft.provider === 'byok' && <Check size={18} />}</button>
       </div>
       {draft.provider === 'lmstudio' ? <>
         <label>LM Studio model<input required maxLength={100} value={draft.lmstudioModel} onChange={event => setDraft({ ...draft, lmstudioModel: event.target.value })} placeholder="google/gemma-4-e4b" /></label>
@@ -85,11 +116,18 @@ export function SettingsForm({ settings, configured, onSave, onClose }: { settin
           {models.length > 0 && !models.includes(draft.ollamaModel) && <p className="field-hint">The model entered above is not installed. Select an installed model and save settings.</p>}
         </>}
         <div className="info-box"><ShieldCheck size={20} /><div><strong>Nothing leaves your computer</strong><p>Install and start Ollama, then download the model with <code>ollama pull {draft.ollamaModel || 'llama3.2'}</code> in your terminal. The app connects to your local Ollama service.</p></div></div>
+      </> : draft.provider === 'byok' ? <>
+        <label>API base URL<input required type="url" maxLength={2000} value={draft.byokBaseUrl} onChange={event => { setDraft({ ...draft, byokBaseUrl: event.target.value, byokApiKey: '' }); setSettingsError('') }} placeholder="https://api.example.com/v1" /></label>
+        <p className="field-hint">Use a public HTTPS OpenAI-compatible API base URL, including its version path. Folio appends /chat/completions. Private/local addresses and redirects are blocked. Changing the URL clears the BYOK key.</p>
+        <label>BYOK model<input required maxLength={100} value={draft.byokModel} onChange={event => setDraft({ ...draft, byokModel: event.target.value })} placeholder="Your provider's exact model ID" /></label>
+        <label>BYOK API key<input type="password" autoComplete="off" maxLength={500} value={draft.byokApiKey} onChange={event => setDraft({ ...draft, byokApiKey: event.target.value })} placeholder="Enter your provider's API key" /></label>
+        <p className="field-hint">Bring your own key for an API supporting chat completions and JSON mode. Keys stay in memory only and are cleared on refresh or logout. Your OpenAI key is never reused. Each generation, cleanup, or translation requires consent; your provider's privacy policy and usage charges apply. Web chat continues to use LM Studio.</p>
       </> : <>
         <label>OpenAI model<input required maxLength={100} value={draft.openaiModel} onChange={e => setDraft({ ...draft, openaiModel: e.target.value })} placeholder="gpt-4o-mini" /></label>
         <label>API key <span className="optional">{configured ? 'server key configured' : 'required for generation'}</span><input type="password" autoComplete="off" maxLength={500} value={draft.apiKey} onChange={e => setDraft({ ...draft, apiKey: e.target.value })} placeholder={configured ? 'Using server key unless overridden' : 'Enter your OpenAI API key'} /></label>
         <p className="field-hint">Keys entered here stay in memory only and are cleared on refresh. OpenAI may charge for API usage. Your resume and job description are sent to OpenAI only when you explicitly confirm generation.</p>
       </>}
+      <InlineError message={settingsError} />
     </div><div className="modal-footer"><button type="button" className="button secondary" onClick={onClose}>Cancel</button><button className="button primary" type="submit"><Check size={16} />Save settings</button></div></form>
   </Modal>
 }
@@ -99,12 +137,14 @@ export function GenerateForm({ base, settings, configured, initialDocumentType =
   const [documentType, setDocumentType] = useState<DocumentType>(initialDocumentType)
   const isCoverLetter = documentType === 'cover-letter'
   const [role, setRole] = useState(''), [company, setCompany] = useState(''), [jd, setJd] = useState('')
-  const [consent, setConsent] = useState(false), [apiKey, setApiKey] = useState(settings.apiKey)
+  const [consent, setConsent] = useState(false), [apiKey, setApiKey] = useState(selectedApiKey(settings))
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
   const [uploading, setUploading] = useState(false), [jdFilename, setJdFilename] = useState('')
   const jdFileInput = useRef<HTMLInputElement>(null)
   const pending = useRef(false)
   const model = selectedModel(settings)
+  const serverConfigured = settings.provider === 'openai' && configured
+  const canSubmit = canProcess(settings, configured, apiKey, consent)
   const close = () => { if (!pending.current && (!jd || window.confirm('Discard this job description?'))) onClose() }
   async function uploadJd(file: File) {
     if (pending.current) return
@@ -123,10 +163,11 @@ export function GenerateForm({ base, settings, configured, initialDocumentType =
   async function submit(event: FormEvent) {
     event.preventDefault()
     if (pending.current) return
+    if (!canSubmit) { setError('Select a model in AI settings and provide the required API key and consent before generating.'); return }
     if (jd.trim().length < 80) { setError('Add at least 80 characters to the job description before generating.'); return }
     pending.current = true; setBusy(true); setError('')
     try {
-      const { additionalVersions = [], ...version } = await request<GenerationResponse>('/versions', { method: 'POST', body: JSON.stringify({ baseId: base.id, role, company, jobDescription: jd, documentType, provider: settings.provider, model, ...(settings.provider === 'openai' ? { apiKey, cloudConsent: consent } : {}) }) })
+      const { additionalVersions = [], ...version } = await request<GenerationResponse>('/versions', { method: 'POST', body: JSON.stringify({ baseId: base.id, role, company, jobDescription: jd, documentType, provider: settings.provider, model, ...cloudOptions(settings, apiKey, consent) }) })
       onCreated([version, ...additionalVersions])
     } catch (e) { setError(errorMessage(e)) } finally { pending.current = false; setBusy(false) }
   }
@@ -146,9 +187,9 @@ export function GenerateForm({ base, settings, configured, initialDocumentType =
       <div className="field-meta"><span>At least 80 characters</span><span>{jd.length.toLocaleString()} / 30,000</span></div>
       <div className="info-box language-notice"><Sparkles size={20} /><div><strong>Automatic language matching</strong><p>{isCoverLetter ? 'The AI detects the main language of your job description. English jobs get one English cover letter. Other languages get a matching-language cover letter plus an English version, saved locally as two separate drafts. Edit, track status, and export each independently.' : 'The AI detects the main language of your job description. English jobs get one English resume. Other languages get a matching-language resume plus an English version, saved as two separate drafts.'}</p></div></div>
       <GenerationProvider settings={settings} />
-      {settings.provider === 'openai' && <>
-        {!configured && !settings.apiKey && <label>OpenAI API key<input required type="password" autoComplete="off" value={apiKey} onChange={e => setApiKey(e.target.value)} disabled={busy} placeholder="Kept in memory for this request" /></label>}
-        <label className="checkbox-label"><input type="checkbox" required checked={consent} onChange={e => setConsent(e.target.checked)} disabled={busy} /><span>I agree to send my base resume and this job description to OpenAI for this generation.</span></label>
+      {usesCloud(settings) && <>
+        {!serverConfigured && !selectedApiKey(settings).trim() && <label>{providerNames[settings.provider]} API key<input required type="password" autoComplete="off" maxLength={500} value={apiKey} onChange={e => { setApiKey(e.target.value); setConsent(false) }} disabled={busy} placeholder="Kept in memory for this request" /></label>}
+        <label className="checkbox-label"><input type="checkbox" required checked={consent} onChange={e => setConsent(e.target.checked)} disabled={busy} /><span>I agree to send my base resume and this job description to {cloudDestination(settings)} for this generation.</span></label>
       </>}
       <InlineError message={error} />
       {busy && !uploading && <div className="generation-progress" role="status"><LoaderCircle className="spin" size={20} /><div><strong>Finding the right words…</strong><span>Reviewing your experience against this role. This may take up to 3 minutes; keep this window open.</span></div></div>}
@@ -162,11 +203,12 @@ export interface TranslationActionsProps {
 export function CleanResumeForm({ base, settings, configured, onClose, onCreated }: {
   base: BaseResume; settings: Settings; configured: boolean; onClose: () => void; onCreated: (versions: ResumeVersion[]) => void
 }) {
-  const [consent, setConsent] = useState(false), [apiKey, setApiKey] = useState(settings.apiKey)
+  const [consent, setConsent] = useState(false), [apiKey, setApiKey] = useState(selectedApiKey(settings))
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
   const pending = useRef(false)
   const model = selectedModel(settings)
-  const canSubmit = !!model.trim() && (settings.provider !== 'openai' || (consent && (configured || !!apiKey.trim())))
+  const serverConfigured = settings.provider === 'openai' && configured
+  const canSubmit = canProcess(settings, configured, apiKey, consent)
   const close = () => { if (!pending.current) onClose() }
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -175,7 +217,7 @@ export function CleanResumeForm({ base, settings, configured, onClose, onCreated
     try {
       const result = await request<{ versions: ResumeVersion[] }>('/base/clean', { method: 'POST', body: JSON.stringify({
         baseId: base.id, provider: settings.provider, model,
-        ...(settings.provider === 'openai' ? { apiKey, cloudConsent: consent } : {}),
+        ...cloudOptions(settings, apiKey, consent),
       }) })
       onCreated(result.versions)
     } catch (e) { setError(errorMessage(e)) }
@@ -188,10 +230,10 @@ export function CleanResumeForm({ base, settings, configured, onClose, onCreated
       <p className="muted">Your original PDF, extracted text and previous drafts stay unchanged. Future tailoring still uses your saved extracted text. Generating again creates new drafts without overwriting your edits.</p>
       <GenerationProvider settings={settings} />
       {!model.trim() && <p className="field-hint">Cancel and select a model in AI settings before generating.</p>}
-      {settings.provider === 'openai' && <>
-        <label>OpenAI API key <span className="optional">{configured ? 'server key configured' : 'required for generation'}</span><input type="password" autoComplete="off" maxLength={500} required={!configured} value={apiKey} onChange={event => { setApiKey(event.target.value); setConsent(false) }} disabled={busy} placeholder={configured ? 'Using server key unless overridden' : 'Kept in memory for this request'} /></label>
-        <label className="checkbox-label"><input type="checkbox" required checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy} /><span>I agree to send my base resume to OpenAI to create clean English and Chinese versions.</span></label>
-        <p className="field-hint">Keys stay in memory only. OpenAI may charge for API usage. Consent applies only to this generation.</p>
+      {usesCloud(settings) && <>
+        <label>{providerNames[settings.provider]} API key <span className="optional">{serverConfigured ? 'server key configured' : 'required for generation'}</span><input type="password" autoComplete="off" maxLength={500} required={!serverConfigured} value={apiKey} onChange={event => { setApiKey(event.target.value); setConsent(false) }} disabled={busy} placeholder={serverConfigured ? 'Using server key unless overridden' : 'Kept in memory for this request'} /></label>
+        <label className="checkbox-label"><input type="checkbox" required checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy} /><span>I agree to send my base resume to {cloudDestination(settings)} to create clean English and Chinese versions.</span></label>
+        <p className="field-hint">Keys stay in memory only. {providerNames[settings.provider]} usage may incur provider charges. Consent applies only to this generation.</p>
       </>}
       <InlineError message={error} />
       {busy && <div className="generation-progress" role="status"><LoaderCircle className="spin" size={20} /><div><strong>Cleaning both language versions…</strong><span>This may take up to 3 minutes. Keep this window open.</span></div></div>}
@@ -217,13 +259,14 @@ export interface TranslationFormProps {
 }
 export function TranslationForm({ source, initialTargetLanguage, settings, configured, onClose, onCreated }: TranslationFormProps) {
   const [targetLanguage, setTargetLanguage] = useState(initialTargetLanguage)
-  const [consent, setConsent] = useState(false), [apiKey, setApiKey] = useState(settings.apiKey)
+  const [consent, setConsent] = useState(false), [apiKey, setApiKey] = useState(selectedApiKey(settings))
   const [busy, setBusy] = useState(false), [error, setError] = useState('')
   const submitting = useRef(false)
   const model = selectedModel(settings)
   const targetName = targetLanguage === 'zh-Hans' ? 'Chinese (Simplified)' : 'English'
   const sourceName = source.sourceType === 'base' ? 'Base resume' : source.documentType === 'cover-letter' ? 'Cover letter' : 'Resume'
-  const canSubmit = !!model.trim() && (settings.provider !== 'openai' || (consent && (configured || !!apiKey.trim())))
+  const serverConfigured = settings.provider === 'openai' && configured
+  const canSubmit = canProcess(settings, configured, apiKey, consent)
   const close = () => { if (!submitting.current) onClose() }
   async function submit(event: FormEvent) {
     event.preventDefault()
@@ -231,7 +274,7 @@ export function TranslationForm({ source, initialTargetLanguage, settings, confi
     submitting.current = true; setBusy(true); setError('')
     try {
       const body: TranslationRequest = { sourceType: source.sourceType, sourceId: source.sourceId, targetLanguage, provider: settings.provider, model,
-        ...(settings.provider === 'openai' ? { apiKey, cloudConsent: consent } : {}) }
+        ...cloudOptions(settings, apiKey, consent) }
       const version = await request<ResumeVersion>('/translations', { method: 'POST', body: JSON.stringify(body) })
       onCreated(version)
     } catch (e) {
@@ -245,10 +288,10 @@ export function TranslationForm({ source, initialTargetLanguage, settings, confi
       <div className="info-box"><ShieldCheck size={20} /><div><strong>Translate to {targetName}</strong><p>Translates the complete current saved document text and saves a separate editable draft without changing the original. This is a translation, not AI tailoring; no job requirements are analyzed. Review, edit, and export the result as a PDF.</p></div></div>
       <GenerationProvider settings={settings} />
       {!model.trim() && <p className="field-hint">Cancel and select a model in AI settings before translating.</p>}
-      {settings.provider === 'openai' && <>
-        <label>OpenAI API key <span className="optional">{configured ? 'server key configured' : 'required for translation'}</span><input type="password" autoComplete="off" maxLength={500} required={!configured} value={apiKey} onChange={event => { setApiKey(event.target.value); setConsent(false) }} disabled={busy} placeholder={configured ? 'Using server key unless overridden' : 'Kept in memory for this request'} /></label>
-        <p className="field-hint">Keys stay in memory only. OpenAI may charge for API usage. Consent applies only to this translation.</p>
-        <label className="checkbox-label"><input type="checkbox" required checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy} /><span>I agree to send this document text to OpenAI for this translation.</span></label>
+      {usesCloud(settings) && <>
+        <label>{providerNames[settings.provider]} API key <span className="optional">{serverConfigured ? 'server key configured' : 'required for translation'}</span><input type="password" autoComplete="off" maxLength={500} required={!serverConfigured} value={apiKey} onChange={event => { setApiKey(event.target.value); setConsent(false) }} disabled={busy} placeholder={serverConfigured ? 'Using server key unless overridden' : 'Kept in memory for this request'} /></label>
+        <p className="field-hint">Keys stay in memory only. {providerNames[settings.provider]} usage may incur provider charges. Consent applies only to this translation.</p>
+        <label className="checkbox-label"><input type="checkbox" required checked={consent} onChange={event => setConsent(event.target.checked)} disabled={busy} /><span>I agree to send this document text to {cloudDestination(settings)} for this translation.</span></label>
       </>}
       <InlineError message={error} />
       {busy && <div className="generation-progress" role="status"><LoaderCircle className="spin" size={20} /><div><strong>Translating document…</strong><span>This may take up to 3 minutes. Keep this window open.</span></div></div>}

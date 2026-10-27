@@ -21,7 +21,7 @@ export interface ResumeVersion {
   summary: string
   keywords: string[]
   gaps: string[]
-  provider: 'ollama' | 'openai' | 'lmstudio'
+  provider: 'ollama' | 'openai' | 'lmstudio' | 'byok'
   model: string
   // Optional for older saved versions; metadata is immutable after creation.
   documentType?: 'resume' | 'cover-letter'

@@ -95,6 +95,10 @@ Chromium copy by setting `PLAYWRIGHT_CHANNEL=chrome` for the test command.
    settings dialog, document/dialog overflow checks, and mobile screenshots.
 6. Separate 320px viewport overflow regression, so failures at that width do not
   prevent the rest of the mobile workflow from being exercised.
+7. BYOK custom base URL/model selection, URL syntax validation, separate memory-only
+   keys, destination-change/reload/logout clearing, per-operation consent, and
+   request wiring for resumes, cover letters, cleanup, and translations. These
+   cases use the same injected fake providers, never a real BYOK endpoint.
 
 ### Cover-letter cases
 
