@@ -136,6 +136,7 @@ Run these npm scripts from the project root:
 | `npm install` | Install dependencies on a new checkout |
 | `npm run dev` | Start Vite at http://127.0.0.1:5173 and the API at http://127.0.0.1:3001 |
 | `npm run build` | Type-check frontend/backend and build production assets |
+| `npm run deploy:local` | Install dependencies, validate and deploy a local web release, then start the server |
 | `npm start` | Serve the built app and API together at http://127.0.0.1:3001; build first |
 | `npm run admin:init` | Initialize local administrator wxpwindy once, with a hidden initial-password prompt |
 | `npm run lint` | Run Oxlint |
@@ -143,6 +144,26 @@ Run these npm scripts from the project root:
 | `npm run test:e2e` | Build and run browser tests with isolated in-memory storage and fake AI |
 
 Stop the development task with **Terminal → Terminate Task → Folio: development**, or press Ctrl+C in its terminal. Do not run the development API and production server at the same time; both use port 3001.
+
+### Deploy and start locally
+
+With Node.js 24+ and npm installed, stop any existing Folio server, then run from the project root:
+
+```sh
+npm run deploy:local
+```
+
+The [local deployment script](scripts/deploy-local.sh) checks port 3001, installs dependencies (including build/test tools), runs the full local CI pipeline, atomically deploys the passing web release, and starts the backend in the foreground. Open **http://127.0.0.1:3001**; press **Ctrl+C** to stop. It remains loopback-only, preserves local data and environment files, and does not initialize or reset accounts. Normal startup database migrations still apply; back up existing data before upgrading.
+
+Browser checks require installed Google Chrome on macOS or Playwright Chromium. If neither is installed, run `npx playwright install chromium` after dependencies are installed and retry. A failed check prevents deployment and startup; the previous web release remains active. This command can take several minutes. Roll back the web release through **Administration → CI/CD pipeline**; backend rollback requires restoring the previous source/dependencies and restarting separately.
+
+To restart an already deployed installation without rebuilding:
+
+```sh
+npm start
+```
+
+For validation and web deployment without starting the server, use `npm run ci:local -- --deploy`. Without `--deploy`, the existing `npm run ci:local` command still validates only. A deployed pipeline release takes precedence over the workspace build produced by `npm run build`.
 
 The project-scoped npm cache in [.npmrc](.npmrc) avoids the existing global npm cache permission issue. Its contents are ignored by Git and are not application data.
 

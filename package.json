@@ -10,6 +10,7 @@
     "dev": "concurrently -k -n api,web -c blue,green \"tsx watch server/index.ts\" \"vite\"",
     "build": "tsc -b && tsc -p tsconfig.server.json && vite build",
     "start": "tsx server/index.ts",
+    "deploy:local": "bash scripts/deploy-local.sh",
     "admin:init": "tsx server/admin-init.ts",
     "ci:local": "tsx server/pipeline-cli.ts",
     "test": "tsx --test server/*.test.ts",
